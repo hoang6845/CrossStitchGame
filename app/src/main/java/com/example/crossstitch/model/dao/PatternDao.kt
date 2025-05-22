@@ -1,0 +1,24 @@
+package com.example.crossstitch.model.dao
+
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Update
+import com.example.crossstitch.model.entity.PatternData
+import kotlinx.coroutines.flow.Flow
+
+@Dao
+interface PatternDao {
+    @Query("select * from Pattern")
+    fun findAll(): Flow<List<PatternData>>
+
+    @Insert
+    suspend fun insert(pattern:PatternData)
+
+    @Update
+    suspend fun update(pattern:PatternData)
+
+    @Delete
+    suspend fun delete(pattern:PatternData)
+}

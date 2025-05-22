@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".GameManager">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <FrameLayout
+        android:id="@+id/MainBoardGame"
+        android:layout_width="match_parent"
+        android:layout_height="900px"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/setting"></FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/setting"
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/MainBoardGame"
+        android:layout_height="0dp">
+
+        <Button
+            android:id="@+id/btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="back"
+
+            >
+
+        </Button>
+
+        <Button
+            android:id="@+id/cache"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="cache"></Button>
+
+    </LinearLayout>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/boxstate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="gone"
+        app:cardCornerRadius="24dp"
+        android:elevation="20dp"
+        >
+        <ImageView
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:layout_width="172dp"
+            android:layout_height="200dp"
+            android:id="@+id/currentState"
+            ></ImageView>
+
+    </androidx.cardview.widget.CardView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
