@@ -36,7 +36,7 @@
                 android:id="@+id/btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="back"
+                android:text="fullsize"
 
                 >
 
@@ -46,7 +46,14 @@
                 android:id="@+id/cache"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="cache"></Button>
+                android:text="currentstate"></Button>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/save"
+                android:text="Save"
+                ></Button>
         </LinearLayout>
 
         <GridLayout

@@ -7,6 +7,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.crossstitch.model.entity.PatternData
 import com.example.crossstitch.repository.PatternRepository
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class PatternViewModel(private val patternRepository: PatternRepository):ViewModel() {
@@ -23,6 +26,10 @@ class PatternViewModel(private val patternRepository: PatternRepository):ViewMod
 
     fun updatePattern(pattern: PatternData) = viewModelScope.launch {
         patternRepository.addPattern(pattern)
+    }
+
+    fun findPatternAsync(id: Int): Deferred<PatternData?> = viewModelScope.async {
+        patternRepository.findOne(id)
     }
 
     companion object {

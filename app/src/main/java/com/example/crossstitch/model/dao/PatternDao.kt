@@ -13,6 +13,9 @@ interface PatternDao {
     @Query("select * from Pattern")
     fun findAll(): Flow<List<PatternData>>
 
+    @Query("select * from Pattern where id = :id")
+    suspend fun find(id:Int): PatternData
+
     @Insert
     suspend fun insert(pattern:PatternData)
 

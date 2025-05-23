@@ -46,9 +46,9 @@ class CrossStitchView @JvmOverloads constructor(
     private var touchDownY = 0f
     private val touchSlop = 10f
 
-    private val grid = Array(numRows) { IntArray(numCols) { Color.WHITE } }
+    private var grid = Array(numRows) { IntArray(numCols) { Color.WHITE } }
 
-    var selectedColor: Int = Color.RED
+    var selectedColor: Int? = null
 
     private val paint = Paint().apply {
         style = Paint.Style.FILL
@@ -59,6 +59,14 @@ class CrossStitchView @JvmOverloads constructor(
 
     fun getBitMap(): Bitmap? {
         return cacheBitmap
+    }
+
+    fun setSelectedColor(color:Int){
+        selectedColor = color
+    }
+
+    fun getGrid(): Array<IntArray> {
+        return grid
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -77,7 +85,11 @@ class CrossStitchView @JvmOverloads constructor(
         }
     }
 
-
+    fun setGrid(grid:Array<IntArray>){
+        this.grid = grid
+        cacheCanvas?.let { drawMainGrid(it) }
+        invalidate()
+    }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (!drawMode) {
@@ -104,9 +116,11 @@ class CrossStitchView @JvmOverloads constructor(
             val col = (event.x / drawCellSize!!).toInt()
             val row = (event.y / drawCellSize!!).toInt()
             if (startRow!!+row in 0 until numRows && startCol!!+col in 0 until numCols) {
-                Log.d("ROW", "onTouchEvent: ${row} +${startRow} ")
-                grid[startRow!!+row][startCol!!+col] = selectedColor
-                cacheCanvas?.let { updateOnMainGrid(it, startRow!!+row, startCol!!+col, selectedColor) }
+                Toast.makeText(this@CrossStitchView.context, "row: ${startRow!!+row}, col: ${startCol!!+col}", Toast.LENGTH_SHORT).show()
+                grid[startRow!!+row][startCol!!+col] = selectedColor!!
+                cacheCanvas?.let { updateOnMainGrid(it, startRow!!+row, startCol!!+col,
+                    selectedColor!!
+                ) }
                 invalidate()
             }
         }
