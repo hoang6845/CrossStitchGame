@@ -1,21 +1,22 @@
-package com.example.crossstitch
+package com.example.crossstitch.ui.screen
 
 import android.annotation.SuppressLint
-import android.app.Application
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.example.crossstitch.converter.ConverterPixel
+import com.example.crossstitch.R
 import com.example.crossstitch.databinding.FragmentGameManagerBinding
 import com.example.crossstitch.model.entity.PatternData
 import com.example.crossstitch.repository.PatternRepository
@@ -31,7 +32,22 @@ class GameManager : Fragment() {
     var handleGetStateCross:View.OnTouchListener? = null
     var handleSwitchMode:View.OnClickListener? = null
 
+    private var currentPattern: PatternData? = null
+
     private lateinit var viewModel : PatternViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val factory = PatternViewModel.providerFactory(PatternRepository.getInstance(requireContext()))
+        viewModel = ViewModelProvider(requireActivity(), factory).get(PatternViewModel::class.java)
+
+        lifecycleScope.launch {
+            currentPattern = arguments?.getInt("PatternId")
+                ?.let { viewModel.listPatternLiveData.value?.get(it) }
+        }
+    }
+
+
 
     @SuppressLint("WrongThread")
     override fun onCreateView(
@@ -39,55 +55,23 @@ class GameManager : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         gameBinding = FragmentGameManagerBinding.inflate(inflater, container, false)
-        stitchView = CrossStitchView(requireContext())
+
+        stitchView = currentPattern?.let { CrossStitchView(requireContext(), it) }!!
 
         prepareHandle()
-
         gameBinding.MainBoardGame.addView(stitchView)
         gameBinding.btn.setOnClickListener(handleSwitchMode)
         gameBinding.cache.setOnTouchListener(handleGetStateCross)
 
-        val factory = PatternViewModel.providerFactory(PatternRepository.getInstance(requireContext()))
-        viewModel = ViewModelProvider(this, factory).get(PatternViewModel::class.java)
 
-        var ListColor = listOf(
-            Color.rgb(255,255,254),
-            Color.rgb(214,222,215),
-            Color.rgb(146,146,147),
-            Color.rgb(88,86,90),
-            Color.rgb(136,129,112),
-            Color.rgb(205,208,205),
-            Color.rgb(175,176,173),
-            Color.rgb(169,169,149),
-            Color.rgb(222,235,236),
-            Color.rgb(15,18,50),
-            Color.rgb(53,50,55),
-            Color.rgb(0,0,0),
-            Color.rgb(62,58,65),
-            Color.rgb(61,44,35),
-            Color.rgb(249,237,210),
-            Color.rgb(253,226,221),
-            Color.rgb(248,220,198),
-            Color.rgb(96,173,54),
-            Color.rgb(28,133,50),
-
-            )
-        prepareColor(ListColor)
+        currentPattern?.collorPalette?.let { prepareColor(it) }
 
 
-        gameBinding.save.setOnClickListener{
-            val bitmap = BitmapFactory.decodeResource(requireContext().resources, R.drawable.panda)
-            val stream = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream)
-            viewModel.addPattern(PatternData(id = null, collorPalette = ListColor, name = "Panda", gridColor = stitchView.getGrid(), image =  stream.toByteArray()))
-        }
-        lifecycleScope.launch {
-            var myPattern = viewModel.findPatternAsync(4).await()
-            myPattern?.gridColor?.let { stitchView.setGrid(it) }
-            val bitmap = BitmapFactory.decodeResource(requireContext().resources, R.drawable.panda)
-            var converterPixel:ConverterPixel = ConverterPixel()
-            stitchView.setGrid(converterPixel.generatePatternFromBitmap(bitmap, 150, 120, 30, ListColor))
-        }
+//        lifecycleScope.launch {
+//            val bitmap = BitmapFactory.decodeResource(requireContext().resources, R.drawable.yasuo)
+//            var converterPixel:ConverterPixel = ConverterPixel()
+//            stitchView.setGrid(converterPixel.generatePatternFromBitmap(bitmap, 150, 120, 30, ListColor))
+//        }
         return gameBinding.root
     }
 
@@ -113,13 +97,15 @@ class GameManager : Fragment() {
     }
 
     fun prepareColor(colorPalette: List<Int>){
+        var map = HashMap<Int, String>()
         for (i in gameBinding.gridlayout.childCount - 1 downTo 0) {
             val child = gameBinding.gridlayout.getChildAt(i)
             if (child is CardView) {
                 gameBinding.gridlayout.removeViewAt(i)
             }
         }
-
+        var count = 0
+        var listSymbols = resources.getStringArray(R.array.symbol_list)
         for (color in colorPalette){
             val cardView = CardView(requireContext()).apply {
                 radius = 16f
@@ -157,10 +143,18 @@ class GameManager : Fragment() {
                 stitchView.setSelectedColor(selectedColor!!)
 
             })
+
+            val textView:TextView = TextView(requireContext()).apply {
+                setText(listSymbols.get(count))
+                textSize = 24f
+                gravity = Gravity.CENTER
+            }
+            map.put(color, listSymbols.get(count))
+            count++;
+            cardView.addView(textView)
             gameBinding.gridlayout.addView(cardView)
-
-
         }
+        stitchView.setMapSymbols(map)
     }
 
 

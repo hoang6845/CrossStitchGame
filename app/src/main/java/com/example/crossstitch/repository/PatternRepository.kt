@@ -11,6 +11,7 @@ class PatternRepository(private val patternDao: PatternDao) {
     suspend fun updatePattern(pattern: PatternData) = patternDao.update(pattern)
     suspend fun deletePattern(pattern: PatternData) = patternDao.delete(pattern)
     suspend fun findOne(id:Int):PatternData = patternDao.find(id)
+    suspend fun deleteAll() = patternDao.deleteAll()
 
     companion object{
         private var _instance:PatternRepository? = null

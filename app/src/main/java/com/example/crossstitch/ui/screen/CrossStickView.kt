@@ -1,30 +1,20 @@
-package com.example.crossstitch
+package com.example.crossstitch.ui.screen
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.graphics.Path
 import android.util.AttributeSet
-import android.util.Log
-import android.view.ActionMode
 import android.view.MotionEvent
 import android.view.View
-import android.widget.Toast
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import kotlin.random.Random
+import com.example.crossstitch.model.entity.PatternData
 
-//width = 720
-//150*6=900
 class CrossStitchView @JvmOverloads constructor(
     context: Context,
-    attrs: AttributeSet? = null
+    patternData: PatternData,
+    attrs: AttributeSet? = null,
+
 ) : View(context, attrs) {
 
     private var drawMode = false
@@ -48,6 +38,14 @@ class CrossStitchView @JvmOverloads constructor(
 
     private var grid = Array(numRows) { IntArray(numCols) { Color.WHITE } }
 
+    private var myCrossStitchGrid = Array(numRows) { arrayOfNulls<Int>(numCols)  }
+
+    private var MapSymbols = HashMap<Int, String>()
+
+    fun setMapSymbols(map:HashMap<Int, String>){
+        MapSymbols = map
+    }
+
     var selectedColor: Int? = null
 
     private val paint = Paint().apply {
@@ -56,6 +54,10 @@ class CrossStitchView @JvmOverloads constructor(
 
     private var cacheBitmap: Bitmap? = null
     private var cacheCanvas: Canvas? = null
+
+    init {
+        this.grid = patternData.gridColor
+    }
 
     fun getBitMap(): Bitmap? {
         return cacheBitmap
@@ -103,7 +105,6 @@ class CrossStitchView @JvmOverloads constructor(
                     val dx = Math.abs(event.x - touchDownX)
                     val dy = Math.abs(event.y - touchDownY)
                     if (dx < touchSlop && dy < touchSlop) {
-                        Toast.makeText(context, "Click vào view", Toast.LENGTH_SHORT).show()
                         drawMode = true
                         invalidate()
                         return true
@@ -116,8 +117,8 @@ class CrossStitchView @JvmOverloads constructor(
             val col = (event.x / drawCellSize!!).toInt()
             val row = (event.y / drawCellSize!!).toInt()
             if (startRow!!+row in 0 until numRows && startCol!!+col in 0 until numCols) {
-                Toast.makeText(this@CrossStitchView.context, "row: ${startRow!!+row}, col: ${startCol!!+col}", Toast.LENGTH_SHORT).show()
                 grid[startRow!!+row][startCol!!+col] = selectedColor!!
+                myCrossStitchGrid[startRow!!+row][startCol!!+col] = selectedColor!!
                 cacheCanvas?.let { updateOnMainGrid(it, startRow!!+row, startCol!!+col,
                     selectedColor!!
                 ) }
@@ -134,23 +135,18 @@ class CrossStitchView @JvmOverloads constructor(
 
         for (row in 0 until numRows) {
             for (col in 0 until numCols) {
-                paint.color = Color.WHITE
-                canvas.drawRect(
-                    col * cellSize, row * cellSize,
-                    (col + 1) * cellSize, (row + 1) * cellSize,
-                    paint
-                )
+
                 if (grid[row][col] != Color.WHITE) {
                     paint.color = grid[row][col]
-                    canvas.drawRect(
-                        col * cellSize, row * cellSize,
-                        (col + 1) * cellSize, (row + 1) * cellSize,
-                        paint
-                    )
+                    drawRect(canvas, cellSize, row, col, row, col)
+                }else{
+                    paint.color = Color.WHITE
+                    drawRect(canvas, cellSize, row, col, row, col)
                 }
                 paint.strokeWidth = 1f
                 paint.color = Color.GRAY
                 paint.style = Paint.Style.STROKE
+//                drawRect(canvas, cellSize, row, col, row, col) // ve vien
                 canvas.drawRect(
                     col * cellSize, row * cellSize,
                     (col + 1) * cellSize, (row + 1) * cellSize,
@@ -165,11 +161,7 @@ class CrossStitchView @JvmOverloads constructor(
 
     private fun updateOnMainGrid(canvas: Canvas, rowUpdate: Int, colUpdate :Int, color: Int){
         paint.color = color
-        canvas.drawRect(
-            colUpdate * cellSize, rowUpdate * cellSize,
-            (colUpdate + 1) * cellSize, (rowUpdate + 1) * cellSize,
-            paint
-        )
+        drawRect(canvas, cellSize, rowUpdate, colUpdate, rowUpdate, colUpdate,true)
     }
 
     //15 o ngang
@@ -190,26 +182,21 @@ class CrossStitchView @JvmOverloads constructor(
         }
         for (row in 0 until numDrawRows) {
             for (col in 0 until numDrawCols) {
-                paint.color = Color.WHITE
-                canvas.drawRect(
-                    col * drawCellSize!!, row * drawCellSize!!,
-                    (col + 1) * drawCellSize!!, (row + 1) * drawCellSize!!,
-                    paint
-                )
+//                Toast.makeText(this@CrossStitchView, , Toast.LENGTH_SHORT).show()
                 if (grid[startRow!! +row][startCol!! +col] != Color.WHITE) {
                     paint.color = grid[startRow!! +row][startCol!! +col]
-                    canvas.drawRect(
-                        col * drawCellSize!!, row * drawCellSize!!,
-                        (col + 1) * drawCellSize!!, (row + 1) * drawCellSize!!,
-                        paint
-                    )
+                    drawRect(canvas, drawCellSize!!, row, col,startRow!! +row, startCol!!+col)
+                }else{
+                    paint.color = Color.WHITE
+                    drawRect(canvas, drawCellSize!!, row, col,startRow!! +row, startCol!!+col)
                 }
                 paint.strokeWidth = 1f
                 paint.color = Color.GRAY
                 paint.style = Paint.Style.STROKE
+//                drawRect(canvas, , row, col,, ) //ve vien
                 canvas.drawRect(
-                    col * drawCellSize!!, row * drawCellSize!!,
-                    (col + 1) * drawCellSize!!, (row + 1) * drawCellSize!!,
+                    col * drawCellSize!!,  row * drawCellSize!!,
+                    (col + 1) * drawCellSize!!,  (row + 1) * drawCellSize!!,
                     paint
                 )
                 paint.style = Paint.Style.FILL
@@ -218,6 +205,42 @@ class CrossStitchView @JvmOverloads constructor(
 
         }
 
+    }
+
+    private fun drawRect(canvas: Canvas, cellSize: Float, row:Int, col:Int, checkRow:Int, checkCol:Int, update:Boolean = false){
+        if (myCrossStitchGrid[checkRow][checkCol] != null){
+            canvas.drawRect(
+                col * cellSize, row * cellSize,
+                (col + 1) * cellSize, (row + 1) * cellSize,
+                paint
+            )
+        }else {
+            val cellLeft = col * cellSize
+            val cellTop = row * cellSize
+            MapSymbols[paint.color]?.let { symbol ->
+                var paintTemp = Paint().apply {
+                    textAlign = Paint.Align.CENTER
+                    textSize = cellSize * 0.8f  //
+                    isAntiAlias = true
+                }
+                val x = cellLeft + cellSize / 2f
+                val y = cellTop + cellSize / 2f - ((paintTemp.descent() + paintTemp.ascent()) / 2)
+                canvas.drawText(symbol, x, y, paintTemp)
+            }
+        }
+
+        if (update){
+            paint.strokeWidth = 1f
+            paint.color = Color.GRAY
+            paint.style = Paint.Style.STROKE
+//            drawRect(canvas, cellSize, row, col, row, col)// ve vien
+            canvas.drawRect(
+                col * cellSize, row * cellSize,
+                (col + 1) * cellSize, (row + 1) * cellSize,
+                paint
+            )
+            paint.style = Paint.Style.FILL
+        }
     }
 
     fun switchToWatchingMode(){

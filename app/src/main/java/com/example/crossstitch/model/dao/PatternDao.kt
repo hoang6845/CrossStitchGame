@@ -24,4 +24,7 @@ interface PatternDao {
 
     @Delete
     suspend fun delete(pattern:PatternData)
+
+    @Query("Delete from Pattern")
+    suspend fun deleteAll()
 }
