@@ -7,11 +7,18 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.crossstitch.converter.Converter
 import com.example.crossstitch.databinding.LineItemPatternBinding
+import com.example.crossstitch.model.entity.GameProgress
 import com.example.crossstitch.model.entity.PatternData
 import com.example.crossstitch.ui.adapter.irv.IPatternRv
 
 class PatternAdapter(var Irv:IPatternRv) :RecyclerView.Adapter<ViewHolder>() {
      var listPattern: List<PatternData>? = listOf()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
+
+    var listProgress: List<GameProgress>? = listOf()
         set(value) {
             field = value
             notifyDataSetChanged()

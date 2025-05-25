@@ -1,5 +1,6 @@
 package com.example.crossstitch.ui.screen
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -7,6 +8,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.crossstitch.R
+import com.example.crossstitch.model.entity.GameProgress
+import com.example.crossstitch.repository.GameProgressRepository
 import com.example.crossstitch.repository.PatternRepository
 import com.example.crossstitch.viewmodel.PatternViewModel
 
@@ -22,8 +25,9 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        val factory = PatternViewModel.providerFactory(PatternRepository.getInstance(applicationContext))
+        val factory = PatternViewModel.providerFactory(PatternRepository.getInstance(applicationContext), GameProgressRepository.getInstance(applicationContext))
         patternViewModel = ViewModelProvider(this, factory).get(PatternViewModel::class.java)
+
 
         supportFragmentManager.beginTransaction().replace(R.id.fragment, PatternMenu()).commit()
     }

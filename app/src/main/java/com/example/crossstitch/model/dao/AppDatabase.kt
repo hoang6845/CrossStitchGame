@@ -4,10 +4,12 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.example.crossstitch.converter.Converter
+import com.example.crossstitch.model.entity.GameProgress
 import com.example.crossstitch.model.entity.PatternData
 
-@Database(entities = [PatternData::class], version = 1)
+@Database(entities = [PatternData::class, GameProgress::class], version = 2)
 @TypeConverters(value = [Converter::class])
 abstract class AppDatabase:RoomDatabase() {
     abstract fun patternDao():PatternDao
+    abstract fun gameProgressDao(): GameProgressDao
 }

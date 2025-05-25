@@ -13,12 +13,15 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.crossstitch.R
 import com.example.crossstitch.databinding.FragmentGameManagerBinding
+import com.example.crossstitch.model.entity.GameProgress
 import com.example.crossstitch.model.entity.PatternData
+import com.example.crossstitch.repository.GameProgressRepository
 import com.example.crossstitch.repository.PatternRepository
 import com.example.crossstitch.viewmodel.PatternViewModel
 import kotlinx.coroutines.launch
@@ -33,21 +36,23 @@ class GameManager : Fragment() {
     var handleSwitchMode:View.OnClickListener? = null
 
     private var currentPattern: PatternData? = null
+    private var currentProgress: GameProgress? = null
 
     private lateinit var viewModel : PatternViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val factory = PatternViewModel.providerFactory(PatternRepository.getInstance(requireContext()))
+        val factory = PatternViewModel.providerFactory(PatternRepository.getInstance(requireContext()), GameProgressRepository.getInstance(requireContext()))
         viewModel = ViewModelProvider(requireActivity(), factory).get(PatternViewModel::class.java)
 
-        lifecycleScope.launch {
-            currentPattern = arguments?.getInt("PatternId")
-                ?.let { viewModel.listPatternLiveData.value?.get(it) }
-        }
+
+        currentPattern = arguments?.getInt("position")
+            ?.let { viewModel.listPatternLiveData.value?.get(it) }
+
+        currentProgress = arguments?.getInt("position")
+            ?.let { viewModel.listGameProgressLiveData.value?.get(it) }
+
     }
-
-
 
     @SuppressLint("WrongThread")
     override fun onCreateView(
@@ -56,16 +61,22 @@ class GameManager : Fragment() {
     ): View? {
         gameBinding = FragmentGameManagerBinding.inflate(inflater, container, false)
 
-        stitchView = currentPattern?.let { CrossStitchView(requireContext(), it) }!!
+        stitchView = currentPattern?.let { currentProgress?.let { it1 ->
+            CrossStitchView(requireContext(), it,
+                it1
+            )
+        } }!!
 
         prepareHandle()
         gameBinding.MainBoardGame.addView(stitchView)
         gameBinding.btn.setOnClickListener(handleSwitchMode)
         gameBinding.cache.setOnTouchListener(handleGetStateCross)
 
-
         currentPattern?.collorPalette?.let { prepareColor(it) }
 
+        gameBinding.save.setOnClickListener(View.OnClickListener {
+            viewModel.updateProgress(stitchView.getProgress())
+        })
 
 //        lifecycleScope.launch {
 //            val bitmap = BitmapFactory.decodeResource(requireContext().resources, R.drawable.yasuo)

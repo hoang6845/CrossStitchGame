@@ -29,6 +29,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textSize="18dp"
+                android:background="#dfdfdf"
+                android:paddingTop="4dp"
                 android:paddingBottom="8dp"
                 android:gravity="center"
                 android:text="name"

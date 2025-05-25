@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.crossstitch.R
 import com.example.crossstitch.databinding.FragmentPatternMenuBinding
+import com.example.crossstitch.repository.GameProgressRepository
 import com.example.crossstitch.repository.PatternRepository
 import com.example.crossstitch.ui.adapter.PatternAdapter
 import com.example.crossstitch.ui.adapter.irv.IPatternRv
@@ -31,13 +32,13 @@ class PatternMenu : Fragment() {
     ): View? {
         patternViewBinding = FragmentPatternMenuBinding.inflate(inflater, container, false)
 
-        val factory = PatternViewModel.providerFactory(PatternRepository.getInstance(requireContext()))
+        val factory = PatternViewModel.providerFactory(PatternRepository.getInstance(requireContext()), GameProgressRepository.getInstance(requireContext()))
         viewModel = ViewModelProvider(requireActivity(), factory).get(PatternViewModel::class.java)
 
         adapter = PatternAdapter(object : IPatternRv{
             override fun onClickItem(position: Int) {
                 val bundle= Bundle()
-                bundle.putInt("PatternId", position)
+                bundle.putInt("position", position)
                 val gameFragment = GameManager()
                 gameFragment.arguments = bundle
                 requireActivity().supportFragmentManager.beginTransaction()
@@ -60,6 +61,9 @@ class PatternMenu : Fragment() {
             list -> adapter!!.listPattern = list
         })
 
+        viewModel.listGameProgressLiveData.observe(viewLifecycleOwner, {
+            list -> adapter!!.listProgress = list
+        })
 
 
         return patternViewBinding.root

@@ -8,13 +8,14 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import com.example.crossstitch.model.entity.GameProgress
 import com.example.crossstitch.model.entity.PatternData
 
 class CrossStitchView @JvmOverloads constructor(
     context: Context,
-    patternData: PatternData,
+    private val patternData: PatternData,
+    var gameProgress: GameProgress,
     attrs: AttributeSet? = null,
-
 ) : View(context, attrs) {
 
     private var drawMode = false
@@ -36,15 +37,16 @@ class CrossStitchView @JvmOverloads constructor(
     private var touchDownY = 0f
     private val touchSlop = 10f
 
-    private var grid = Array(numRows) { IntArray(numCols) { Color.WHITE } }
+    private var grid: Array<IntArray>
 
-    private var myCrossStitchGrid = Array(numRows) { arrayOfNulls<Int>(numCols)  }
+    private var myCrossStitchGrid: Array<IntArray>
 
     private var MapSymbols = HashMap<Int, String>()
 
     fun setMapSymbols(map:HashMap<Int, String>){
         MapSymbols = map
     }
+
 
     var selectedColor: Int? = null
 
@@ -57,6 +59,12 @@ class CrossStitchView @JvmOverloads constructor(
 
     init {
         this.grid = patternData.gridColor
+        this.myCrossStitchGrid = gameProgress.myCrossStitchGrid
+    }
+
+    fun getProgress(): GameProgress {
+        gameProgress.myCrossStitchGrid = this.myCrossStitchGrid
+        return gameProgress
     }
 
     fun getBitMap(): Bitmap? {
@@ -87,11 +95,6 @@ class CrossStitchView @JvmOverloads constructor(
         }
     }
 
-    fun setGrid(grid:Array<IntArray>){
-        this.grid = grid
-        cacheCanvas?.let { drawMainGrid(it) }
-        invalidate()
-    }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (!drawMode) {
@@ -118,6 +121,7 @@ class CrossStitchView @JvmOverloads constructor(
             val row = (event.y / drawCellSize!!).toInt()
             if (startRow!!+row in 0 until numRows && startCol!!+col in 0 until numCols) {
                 grid[startRow!!+row][startCol!!+col] = selectedColor!!
+                updateProgress(startRow!!+row, startCol!! + col, selectedColor!!)
                 myCrossStitchGrid[startRow!!+row][startCol!!+col] = selectedColor!!
                 cacheCanvas?.let { updateOnMainGrid(it, startRow!!+row, startCol!!+col,
                     selectedColor!!
@@ -126,6 +130,19 @@ class CrossStitchView @JvmOverloads constructor(
             }
         }
         return true
+    }
+
+    private fun updateProgress(row:Int, col:Int, newColor:Int){
+        if (patternData.gridColor[row][col]==myCrossStitchGrid[row][col]&&patternData.gridColor[row][col]!=newColor){
+            gameProgress.completedCells--
+            gameProgress.mistake++
+        }else if (patternData.gridColor[row][col]!=myCrossStitchGrid[row][col]){
+            if (patternData.gridColor[row][col]==newColor){
+                gameProgress.completedCells++
+            }else {
+                gameProgress.mistake++
+            }
+        }
     }
 
 
@@ -208,7 +225,7 @@ class CrossStitchView @JvmOverloads constructor(
     }
 
     private fun drawRect(canvas: Canvas, cellSize: Float, row:Int, col:Int, checkRow:Int, checkCol:Int, update:Boolean = false){
-        if (myCrossStitchGrid[checkRow][checkCol] != null){
+        if (myCrossStitchGrid[checkRow][checkCol] != Int.MIN_VALUE){
             canvas.drawRect(
                 col * cellSize, row * cellSize,
                 (col + 1) * cellSize, (row + 1) * cellSize,
