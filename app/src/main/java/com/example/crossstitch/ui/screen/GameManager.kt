@@ -1,22 +1,18 @@
 package com.example.crossstitch.ui.screen
 
 import android.annotation.SuppressLint
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
 import android.view.Gravity
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.cardview.widget.CardView
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.example.crossstitch.R
 import com.example.crossstitch.databinding.FragmentGameManagerBinding
 import com.example.crossstitch.model.entity.GameProgress
@@ -24,8 +20,6 @@ import com.example.crossstitch.model.entity.PatternData
 import com.example.crossstitch.repository.GameProgressRepository
 import com.example.crossstitch.repository.PatternRepository
 import com.example.crossstitch.viewmodel.PatternViewModel
-import kotlinx.coroutines.launch
-import java.io.ByteArrayOutputStream
 
 lateinit var gameBinding: FragmentGameManagerBinding
 class GameManager : Fragment() {
@@ -34,11 +28,13 @@ class GameManager : Fragment() {
     private var selectedColor:Int? = null
     var handleGetStateCross:View.OnTouchListener? = null
     var handleSwitchMode:View.OnClickListener? = null
+    var handleModeEraser:View.OnClickListener? =null
 
     private var currentPattern: PatternData? = null
     private var currentProgress: GameProgress? = null
 
     private lateinit var viewModel : PatternViewModel
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,6 +67,8 @@ class GameManager : Fragment() {
         gameBinding.MainBoardGame.addView(stitchView)
         gameBinding.btn.setOnClickListener(handleSwitchMode)
         gameBinding.cache.setOnTouchListener(handleGetStateCross)
+        gameBinding.btnEraser.background = null
+        gameBinding.btnEraser.setOnClickListener(handleModeEraser)
 
         currentPattern?.collorPalette?.let { prepareColor(it) }
 
@@ -104,6 +102,21 @@ class GameManager : Fragment() {
 
         handleSwitchMode = View.OnClickListener {
             stitchView.switchToWatchingMode()
+        }
+
+        handleModeEraser = View.OnClickListener {
+            stitchView.changeEraserMode()
+            val selectedDrawable = GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                cornerRadius = 16f
+                setColor(Color.WHITE)
+                setStroke(6, Color.BLACK) // Độ dày và màu viền
+            }
+            if (gameBinding.btnEraser.background == null) {
+                gameBinding.btnEraser.background = selectedDrawable
+            } else {
+                gameBinding.btnEraser.background = null
+            }
         }
     }
 
@@ -141,12 +154,13 @@ class GameManager : Fragment() {
                 }
                 selectedCardView?.background = normalDrawable
 
-                val selectedDrawable = GradientDrawable().apply {
+                var selectedDrawable = GradientDrawable().apply {
                     shape = GradientDrawable.RECTANGLE
                     cornerRadius = 16f
                     setColor(color)
                     setStroke(6, Color.BLACK) // Độ dày và màu viền
                 }
+
                 it.background = selectedDrawable
                 selectedCardView = it as CardView?
                 selectedColor = color

@@ -5,7 +5,10 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.graphics.PorterDuff
+import android.graphics.PorterDuffXfermode
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import com.example.crossstitch.R
@@ -39,8 +42,9 @@ class CrossStitchView @JvmOverloads constructor(
     private val touchSlop = 10f
 
     private var grid: Array<IntArray>
-
     private var myCrossStitchGrid: Array<IntArray>
+    private var completedCells:Int?=0
+    private var mistake:Int? = 0
 
     private var MapSymbols = HashMap<Int, String>()
 
@@ -53,18 +57,23 @@ class CrossStitchView @JvmOverloads constructor(
 
     private val paint = Paint().apply {
         style = Paint.Style.FILL
+        Log.d("PaintColor", "Paint color: ${color}")
     }
 
     private var cacheBitmap: Bitmap? = null
     private var cacheCanvas: Canvas? = null
 
     init {
-        this.grid = patternData.gridColor
-        this.myCrossStitchGrid = gameProgress.myCrossStitchGrid
+        this.grid = patternData.gridColor.map { it.clone() }.toTypedArray()
+        this.myCrossStitchGrid = gameProgress.myCrossStitchGrid.map { it.clone() }.toTypedArray()
+        this.completedCells = gameProgress.completedCells
+        this.mistake = gameProgress.mistake
     }
 
     fun getProgress(): GameProgress {
         gameProgress.myCrossStitchGrid = this.myCrossStitchGrid
+        gameProgress.completedCells = this.completedCells!!
+        gameProgress.mistake = this.mistake!!
         return gameProgress
     }
 
@@ -74,10 +83,6 @@ class CrossStitchView @JvmOverloads constructor(
 
     fun setSelectedColor(color:Int){
         selectedColor = color
-    }
-
-    fun getGrid(): Array<IntArray> {
-        return grid
     }
 
     override fun onDraw(canvas: Canvas) {
@@ -96,6 +101,11 @@ class CrossStitchView @JvmOverloads constructor(
         }
     }
 
+    private var isEraserMode:Boolean= false
+
+    fun changeEraserMode(){
+        isEraserMode = !isEraserMode
+    }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (!drawMode) {
@@ -121,13 +131,25 @@ class CrossStitchView @JvmOverloads constructor(
             val col = (event.x / drawCellSize!!).toInt()
             val row = (event.y / drawCellSize!!).toInt()
             if (startRow!!+row in 0 until numRows && startCol!!+col in 0 until numCols) {
-                grid[startRow!!+row][startCol!!+col] = selectedColor!!
-                updateProgress(startRow!!+row, startCol!! + col, selectedColor!!)
-                myCrossStitchGrid[startRow!!+row][startCol!!+col] = selectedColor!!
-                cacheCanvas?.let { updateOnMainGrid(it, startRow!!+row, startCol!!+col,
-                    selectedColor!!
-                ) }
-                invalidate()
+                if (isEraserMode){
+                    myCrossStitchGrid[startRow!!+row][startCol!!+col] = Int.MIN_VALUE
+                    grid[startRow!!+row][startCol!!+col] = Int.MIN_VALUE
+                    cacheCanvas?.let { updateOnMainGrid(it, startRow!!+row, startCol!!+col,
+                        Int.MIN_VALUE
+                    ) }
+
+                    invalidate()
+                }
+                else{
+                    grid[startRow!!+row][startCol!!+col] = selectedColor!!
+                    updateProgress(startRow!!+row, startCol!! + col, selectedColor!!)
+                    myCrossStitchGrid[startRow!!+row][startCol!!+col] = selectedColor!!
+                    cacheCanvas?.let { updateOnMainGrid(it, startRow!!+row, startCol!!+col,
+                        selectedColor!!
+                    ) }
+                    invalidate()
+                }
+
             }
         }
         return true
@@ -135,13 +157,13 @@ class CrossStitchView @JvmOverloads constructor(
 
     private fun updateProgress(row:Int, col:Int, newColor:Int){
         if (patternData.gridColor[row][col]==myCrossStitchGrid[row][col]&&patternData.gridColor[row][col]!=newColor){
-            gameProgress.completedCells--
-            gameProgress.mistake++
+            this.completedCells = this.completedCells!! - 1
+            this.mistake = this.mistake!! + 1
         }else if (patternData.gridColor[row][col]!=myCrossStitchGrid[row][col]){
             if (patternData.gridColor[row][col]==newColor){
-                gameProgress.completedCells++
+                this.completedCells = this.completedCells!! + 1
             }else {
-                gameProgress.mistake++
+                this.mistake = this.mistake!! + 1
             }
         }
     }
@@ -161,6 +183,7 @@ class CrossStitchView @JvmOverloads constructor(
                     paint.color = Color.WHITE
                     drawRect(canvas, cellSize, row, col, row, col)
                 }
+//                Log.d("DEBUG", "drawMainGridqweq: ${paint.color}")
                 paint.strokeWidth = 1f
                 paint.color = Color.GRAY
                 paint.style = Paint.Style.STROKE
@@ -177,8 +200,22 @@ class CrossStitchView @JvmOverloads constructor(
         }
     }
 
-    private fun updateOnMainGrid(canvas: Canvas, rowUpdate: Int, colUpdate :Int, color: Int){
-        paint.color = color
+    private fun updateOnMainGrid(canvas: Canvas, rowUpdate: Int, colUpdate :Int, color1: Int){
+        paint.color = color1
+//        Log.d("DEBUG", "updateOnMainGrid: ${paint.color}")
+        val cellLeft = colUpdate * cellSize
+        val cellTop = rowUpdate * cellSize
+
+        // 1. Clear ô cũ: vẽ lại nền trắng
+        var clearPaint = Paint().apply {
+            xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
+            style = Paint.Style.FILL
+        }
+        canvas.drawRect(
+            cellLeft, cellTop,
+            cellLeft + cellSize, cellTop + cellSize,
+            clearPaint
+        )
         drawRect(canvas, cellSize, rowUpdate, colUpdate, rowUpdate, colUpdate,true)
     }
 
@@ -227,18 +264,32 @@ class CrossStitchView @JvmOverloads constructor(
 
     private fun drawRect(canvas: Canvas, cellSize: Float, row:Int, col:Int, checkRow:Int, checkCol:Int, update:Boolean = false){
         if (myCrossStitchGrid[checkRow][checkCol] != Int.MIN_VALUE){
+//            Log.d("DEBUG", "updateOnMainGrid1: ${myCrossStitchGrid[checkRow][checkCol]}")
+            paint.color = myCrossStitchGrid[checkRow][checkCol]
             canvas.drawRect(
                 col * cellSize, row * cellSize,
                 (col + 1) * cellSize, (row + 1) * cellSize,
                 paint
             )
+            if (this.patternData.gridColor[checkRow][checkCol]!=myCrossStitchGrid[checkRow][checkCol]){
+                val cellLeft = col * cellSize
+                val cellTop = row * cellSize
+                var paintTemp = Paint().apply {
+                    textAlign = Paint.Align.CENTER
+                    textSize = cellSize * 0.6f
+                    isAntiAlias = true
+                }
+                val x = cellLeft + cellSize / 2f
+                val y = cellTop + cellSize / 2f - ((paintTemp.descent() + paintTemp.ascent()) / 2)
+                canvas.drawText(resources.getString(R.string.warning), x, y, paintTemp)
+            }
         }else {
             val cellLeft = col * cellSize
             val cellTop = row * cellSize
-            MapSymbols[paint.color]?.let { symbol ->
+            MapSymbols[this.patternData.gridColor[checkRow][checkCol]]?.let { symbol ->
                 var paintTemp = Paint().apply {
                     textAlign = Paint.Align.CENTER
-                    textSize = cellSize * 0.8f  //
+                    textSize = cellSize * 0.8f
                     isAntiAlias = true
                 }
                 val x = cellLeft + cellSize / 2f

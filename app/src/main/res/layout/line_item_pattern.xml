@@ -22,7 +22,6 @@
             <ImageView
                 android:id="@+id/image"
                 android:layout_width="match_parent"
-                android:src="@drawable/img"
                 android:padding="8dp"
                 android:layout_height="160dp">
             </ImageView>
