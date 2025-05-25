@@ -1,7 +1,5 @@
 package com.example.crossstitch.ui.screen
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +8,8 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
 import com.example.crossstitch.R
 import com.example.crossstitch.databinding.FragmentPatternMenuBinding
 import com.example.crossstitch.repository.GameProgressRepository
@@ -47,7 +47,7 @@ class PatternMenu : Fragment() {
                     .commit()
             }
 
-        })
+        }, listOf(), listOf(), mutableListOf())
 
         patternViewBinding.rv.adapter = adapter
         patternViewBinding.rv.layoutManager = GridLayoutManager(
@@ -59,14 +59,43 @@ class PatternMenu : Fragment() {
 
         viewModel.listPatternLiveData.observe(viewLifecycleOwner, {
             list -> adapter!!.listPattern = list
+            adapter!!.listState = MutableList(list.size){true}
+            adapter!!.notifyDataSetChanged()
+            Toast.makeText(this@PatternMenu.context, "sad", Toast.LENGTH_SHORT).show()
         })
 
         viewModel.listGameProgressLiveData.observe(viewLifecycleOwner, {
             list -> adapter!!.listProgress = list
+            adapter!!.notifyDataSetChanged()
         })
 
+        prepareSwipedItem()
 
         return patternViewBinding.root
+    }
+
+    fun prepareSwipedItem(){
+        var i = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT){
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                var position = viewHolder.adapterPosition
+                if ( direction == ItemTouchHelper.RIGHT){
+                    adapter?.rotate(position)
+                    adapter?.notifyItemChanged(position)
+
+                }
+            }
+
+        }
+        val itemTouchHelper = ItemTouchHelper(i)
+        itemTouchHelper.attachToRecyclerView(patternViewBinding.rv)
     }
 
 

@@ -8,6 +8,7 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import com.example.crossstitch.R
 import com.example.crossstitch.model.entity.GameProgress
 import com.example.crossstitch.model.entity.PatternData
 
@@ -20,8 +21,8 @@ class CrossStitchView @JvmOverloads constructor(
 
     private var drawMode = false
 
-    private val numRows = 150
-    private val numCols = 120
+    private val numRows = resources.getInteger(R.integer.max_rows)
+    private val numCols = resources.getInteger(R.integer.max_columns)
 
     private val numDrawCols = 16
     private val numDrawRows = 20

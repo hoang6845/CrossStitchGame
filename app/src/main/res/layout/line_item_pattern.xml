@@ -9,11 +9,13 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/itemPattern"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="200dp"
         android:layout_margin="4dp"
         app:cardCornerRadius="16dp"
+        android:visibility="visible"
         >
         <LinearLayout
+            android:id="@+id/front"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -27,7 +29,69 @@
             <TextView
                 android:id="@+id/name"
                 android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:textSize="18dp"
+                android:background="#dfdfdf"
+                android:paddingTop="4dp"
+                android:paddingBottom="8dp"
+                android:gravity="center"
+                android:text="name"
+                ></TextView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/behind"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+           >
+            <FrameLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/custom_stroke_progress"
+                >
+                <ProgressBar
+                    android:id="@+id/progress_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_margin="8dp"
+                    android:max="@integer/max_cells"
+                    android:progressDrawable="@drawable/custom_progress_bg"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    ></ProgressBar>
+
+            </FrameLayout>
+
+            <TextView
+                android:layout_marginTop="7dp"
+                android:id="@+id/completedCells"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:textSize="18dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="8dp"
+                android:gravity="center"
+                android:text="Completed: 50%"
+                ></TextView>
+
+            <TextView
+                android:id="@+id/mistake"
+                android:layout_marginTop="7dp"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:textSize="18dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="8dp"
+                android:gravity="center"
+                android:text="Mistake: "
+                ></TextView>
+
+            <TextView
+                android:id="@+id/name1"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
                 android:textSize="18dp"
                 android:background="#dfdfdf"
                 android:paddingTop="4dp"
