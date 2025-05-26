@@ -13,6 +13,7 @@ import com.example.crossstitch.repository.GameProgressRepository
 import com.example.crossstitch.repository.PatternRepository
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,6 +24,10 @@ class PatternViewModel(private val patternRepository: PatternRepository, private
     private val _listPattern = MutableStateFlow<List<PatternData>>(emptyList())
     val listPattern = _listPattern.asStateFlow()
     val listPatternLiveData = listPattern.asLiveData()
+
+    private val _listOwnPattern = MutableStateFlow<List<PatternData>>(emptyList())
+    val listOwnPattern = _listOwnPattern.asStateFlow()
+    val listOwnPatternLiveData = listOwnPattern.asLiveData()
 
     private val _listProgress = MutableStateFlow<List<GameProgress>>(emptyList())
     val listGameProgress = _listProgress.asStateFlow()
@@ -48,17 +53,22 @@ class PatternViewModel(private val patternRepository: PatternRepository, private
                 }
             }
         }
+
+        viewModelScope.launch(Dispatchers.IO) {
+            patternRepository.getMyPattern().distinctUntilChanged().collect{list->
+                if (list.isNullOrEmpty()){
+                    Log.d("DATABASE", "db is null ")
+                }else{
+                    _listOwnPattern.value = list
+                }
+            }
+        }
     }
 
-    private val _grid = MutableLiveData<Array<IntArray>>()
-    val grid:LiveData<Array<IntArray>> get() = _grid
 
-    fun updateGrid(color:Int, row:Int, col:Int){
-        _grid.value?.get(row)?.set(col, color)
-    }
-
-    fun addPattern(pattern: PatternData) = viewModelScope.launch {
-        patternRepository.addPattern(pattern)
+    fun addPattern(pattern: PatternData): Deferred<Long> = viewModelScope.async {
+        val id = patternRepository.addPattern(pattern)
+        return@async id
     }
 
     fun updatePattern(pattern: PatternData) = viewModelScope.launch {

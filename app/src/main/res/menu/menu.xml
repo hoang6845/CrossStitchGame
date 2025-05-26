@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/patternMenu"
+        android:icon="@drawable/interests_24px"
+        android:title="App"
+        app:showAsAction="always"></item>
+
+    <item
+        android:id="@+id/ownPatternMenu"
+        android:icon="@drawable/photo_library_24px"
+        android:title="Own"
+        app:showAsAction="always"></item>
+</menu>

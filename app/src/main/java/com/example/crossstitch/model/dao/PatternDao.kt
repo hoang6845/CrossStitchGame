@@ -10,14 +10,17 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PatternDao {
-    @Query("select * from Pattern")
+    @Query("select * from Pattern where authorName is null")
     fun findAll(): Flow<List<PatternData>>
+
+    @Query("select * from Pattern where authorName is not null")
+    fun findMyPattern(): Flow<List<PatternData>>
 
     @Query("select * from Pattern where id = :id")
     suspend fun find(id:Int): PatternData
 
     @Insert
-    suspend fun insert(pattern:PatternData)
+    suspend fun insert(pattern:PatternData):Long
 
     @Update
     suspend fun update(pattern:PatternData)

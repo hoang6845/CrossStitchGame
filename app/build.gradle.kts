@@ -40,7 +40,10 @@ android {
 }
 
 dependencies {
+    implementation("com.github.haifengl:smile-core:2.6.0")
     implementation ("com.google.code.gson:gson:2.10.1")
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
     val room_version = "2.6.1"
 
     implementation("androidx.room:room-runtime:$room_version")

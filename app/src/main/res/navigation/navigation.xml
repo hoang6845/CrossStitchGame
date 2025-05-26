@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/patternMenu">
+
+    <fragment
+        android:id="@+id/patternMenu"
+        android:name="com.example.crossstitch.ui.screen.PatternMenu"
+        android:label="fragment_pattern_menu"
+        tools:layout="@layout/fragment_pattern_menu" >
+        <action
+            android:id="@+id/action_patternMenu_to_gameManager"
+            app:destination="@id/gameManager" />
+        <action
+            android:id="@+id/action_patternMenu_to_ownPatternMenu"
+            app:destination="@id/ownPatternMenu" />
+    </fragment>
+    <fragment
+        android:id="@+id/gameManager"
+        android:name="com.example.crossstitch.ui.screen.GameManager"
+        android:label="fragment_game_manager"
+        tools:layout="@layout/fragment_game_manager" >
+        <action
+            android:id="@+id/action_gameManager_to_patternMenu"
+            app:destination="@id/patternMenu" />
+        <argument
+            android:name="position"
+            app:argType="integer" />
+        <argument
+            android:name="type"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/ownPatternMenu"
+        android:name="com.example.crossstitch.ui.screen.OwnPatternMenu"
+        android:label="fragment_own_pattern_menu"
+        tools:layout="@layout/fragment_own_pattern_menu" >
+        <action
+            android:id="@+id/action_ownPatternMenu_to_patternMenu"
+            app:destination="@id/patternMenu" />
+        <action
+            android:id="@+id/action_ownPatternMenu_to_gameManager"
+            app:destination="@id/gameManager" />
+        <action
+            android:id="@+id/action_ownPatternMenu_to_createOwnPattern"
+            app:destination="@id/createOwnPattern" />
+    </fragment>
+    <fragment
+        android:id="@+id/createOwnPattern"
+        android:name="com.example.crossstitch.ui.screen.CreateOwnPattern"
+        android:label="fragment_create_own_pattern"
+        tools:layout="@layout/fragment_create_own_pattern" >
+        <action
+            android:id="@+id/action_createOwnPattern_to_ownPatternMenu"
+            app:destination="@id/ownPatternMenu" />
+    </fragment>
+</navigation>

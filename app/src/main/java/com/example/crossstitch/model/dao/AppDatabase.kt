@@ -7,7 +7,7 @@ import com.example.crossstitch.converter.Converter
 import com.example.crossstitch.model.entity.GameProgress
 import com.example.crossstitch.model.entity.PatternData
 
-@Database(entities = [PatternData::class, GameProgress::class], version = 2)
+@Database(entities = [PatternData::class, GameProgress::class], version = 3)
 @TypeConverters(value = [Converter::class])
 abstract class AppDatabase:RoomDatabase() {
     abstract fun patternDao():PatternDao

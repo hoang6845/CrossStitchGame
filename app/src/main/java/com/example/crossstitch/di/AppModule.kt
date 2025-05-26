@@ -14,7 +14,7 @@ object AppModule {
     fun getDB(context:Context): AppDatabase {
         return _instance?: synchronized(this){
             _instance?: Room.databaseBuilder(context, AppDatabase::class.java, "Cross Stitch")
-                .addMigrations(MIGRATION_1_2)
+                .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                 .build()
                 .also {
                     _instance = it

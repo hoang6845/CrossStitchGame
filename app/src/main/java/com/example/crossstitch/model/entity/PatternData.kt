@@ -10,7 +10,8 @@ data class PatternData(
     var collorPalette:List<Int>,
     var name:String,
     var gridColor: Array<IntArray>,
-    var image: ByteArray
+    var image: ByteArray,
+    var authorName: String? = null
 ) {
 
 }

@@ -14,6 +14,8 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import com.example.crossstitch.R
 import com.example.crossstitch.databinding.FragmentGameManagerBinding
 import com.example.crossstitch.model.entity.GameProgress
@@ -36,18 +38,29 @@ class GameManager : Fragment() {
     private var currentProgress: GameProgress? = null
 
     private lateinit var viewModel : PatternViewModel
-
+    var navController: NavController? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        navController = findNavController()
+
         val factory = PatternViewModel.providerFactory(PatternRepository.getInstance(requireContext()), GameProgressRepository.getInstance(requireContext()))
         viewModel = ViewModelProvider(requireActivity(), factory).get(PatternViewModel::class.java)
 
-        currentPattern = arguments?.getInt("position")
-            ?.let { viewModel.listPatternLiveData.value?.get(it) }
 
-        currentProgress = arguments?.getInt("position")
-            ?.let { viewModel.listGameProgressLiveData.value?.get(it) }
+
+        if (arguments?.getString("type").equals("App")){
+            currentPattern = arguments?.getInt("position")
+                ?.let { viewModel.listPatternLiveData.value?.get(it) }
+            currentProgress = arguments?.getInt("position")
+                ?.let { viewModel.listGameProgressLiveData.value?.get(it) }
+        }else if(arguments?.getString("type").equals("Own")){
+            currentPattern = arguments?.getInt("position")
+                ?.let { viewModel.listOwnPatternLiveData.value?.get(it) }
+            currentProgress = arguments?.getInt("position")
+                ?.let { viewModel.listGameProgressLiveData.value?.get(it+viewModel.listPatternLiveData.value.size) }
+        }
 
     }
 
@@ -56,6 +69,7 @@ class GameManager : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        mainBinding.toolbar.visibility = View.GONE
         gameBinding = FragmentGameManagerBinding.inflate(inflater, container, false)
 
         stitchView = currentPattern?.let { currentProgress?.let { it1 ->
@@ -137,9 +151,9 @@ class GameManager : Fragment() {
             .setMessage("Do you want to save your progress before exiting?")
             .setPositiveButton("Save"){ _,_ ->
                 viewModel.updateProgress(stitchView.getProgress())
-                requireActivity().supportFragmentManager.popBackStack()
+                navController!!.popBackStack()
             }.setNegativeButton("Don't save"){_,_ ->
-                requireActivity().supportFragmentManager.popBackStack()
+                navController!!.popBackStack()
             }.setNeutralButton("Cancle"){dialog,_ ->
                 dialog.dismiss()
             }.show()

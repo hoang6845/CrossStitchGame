@@ -7,7 +7,8 @@ import com.example.crossstitch.model.entity.PatternData
 
 class PatternRepository(private val patternDao: PatternDao) {
     fun getAll() = patternDao.findAll()
-    suspend fun addPattern(pattern: PatternData) = patternDao.insert(pattern)
+    fun getMyPattern() = patternDao.findMyPattern()
+    suspend fun addPattern(pattern: PatternData):Long = patternDao.insert(pattern)
     suspend fun updatePattern(pattern: PatternData) = patternDao.update(pattern)
     suspend fun deletePattern(pattern: PatternData) = patternDao.delete(pattern)
     suspend fun findOne(id:Int):PatternData = patternDao.find(id)
