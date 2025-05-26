@@ -31,4 +31,7 @@ class MainActivity : AppCompatActivity() {
 
         supportFragmentManager.beginTransaction().replace(R.id.fragment, PatternMenu()).commit()
     }
+    fun backHome(){
+        supportFragmentManager.beginTransaction().replace(R.id.fragment, PatternMenu()).commit()
+    }
 }

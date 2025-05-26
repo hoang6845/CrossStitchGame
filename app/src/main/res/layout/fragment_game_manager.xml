@@ -31,38 +31,61 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <ImageButton
-                android:id="@+id/btn_eraser"
-                android:layout_width="wrap_content"
-                android:layout_gravity="center"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ink_eraser_24px">
-            </ImageButton>
-
-            <Button
-                android:id="@+id/btn"
+            android:orientation="horizontal"
+            >
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="fullsize"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1">
+                <ImageButton
+                    android:id="@+id/btn_home"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/house_24px">
+                </ImageButton>
+                <ImageButton
+                    android:id="@+id/btn_save"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/save_24px">
+                </ImageButton>
+            </LinearLayout>
 
-                >
-
-            </Button>
-
-            <Button
-                android:id="@+id/cache"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="currentstate"></Button>
+                android:layout_marginEnd="8dp"
+                android:layout_gravity="right">
+                <ImageButton
+                    android:id="@+id/btn_eraser"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ink_eraser_24px">
+                </ImageButton>
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/save"
-                android:text="Save"
-                ></Button>
+                <ImageButton
+                    android:id="@+id/btn_fullscreen"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/fullscreen_24px">
+                </ImageButton>
+
+                <ImageButton
+                    android:id="@+id/btn_cache"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/dropdown_24px">
+                </ImageButton>
+            </LinearLayout>
+
+
+
         </LinearLayout>
 
         <GridLayout

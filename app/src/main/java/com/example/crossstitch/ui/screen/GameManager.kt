@@ -1,6 +1,7 @@
 package com.example.crossstitch.ui.screen
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
@@ -26,9 +27,10 @@ class GameManager : Fragment() {
     private lateinit var stitchView: CrossStitchView
     private var selectedCardView:CardView? = null
     private var selectedColor:Int? = null
-    var handleGetStateCross:View.OnTouchListener? = null
-    var handleSwitchMode:View.OnClickListener? = null
-    var handleModeEraser:View.OnClickListener? =null
+    private var handleGetStateCross:View.OnTouchListener? = null
+    private var handleSwitchMode:View.OnClickListener? = null
+    private var handleModeEraser:View.OnClickListener? =null
+    private var handleBackHome:View.OnClickListener? =null
 
     private var currentPattern: PatternData? = null
     private var currentProgress: GameProgress? = null
@@ -40,7 +42,6 @@ class GameManager : Fragment() {
         super.onCreate(savedInstanceState)
         val factory = PatternViewModel.providerFactory(PatternRepository.getInstance(requireContext()), GameProgressRepository.getInstance(requireContext()))
         viewModel = ViewModelProvider(requireActivity(), factory).get(PatternViewModel::class.java)
-
 
         currentPattern = arguments?.getInt("position")
             ?.let { viewModel.listPatternLiveData.value?.get(it) }
@@ -65,14 +66,19 @@ class GameManager : Fragment() {
 
         prepareHandle()
         gameBinding.MainBoardGame.addView(stitchView)
-        gameBinding.btn.setOnClickListener(handleSwitchMode)
-        gameBinding.cache.setOnTouchListener(handleGetStateCross)
+        gameBinding.btnFullscreen.background = null
+        gameBinding.btnFullscreen.setOnClickListener(handleSwitchMode)
+        gameBinding.btnCache.background = null
+        gameBinding.btnCache.setOnTouchListener(handleGetStateCross)
         gameBinding.btnEraser.background = null
         gameBinding.btnEraser.setOnClickListener(handleModeEraser)
+        gameBinding.btnHome.background = null
+        gameBinding.btnHome.setOnClickListener(handleBackHome)
 
         currentPattern?.collorPalette?.let { prepareColor(it) }
 
-        gameBinding.save.setOnClickListener(View.OnClickListener {
+        gameBinding.btnSave.background = null
+        gameBinding.btnSave.setOnClickListener(View.OnClickListener {
             viewModel.updateProgress(stitchView.getProgress())
         })
 
@@ -84,6 +90,7 @@ class GameManager : Fragment() {
         return gameBinding.root
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     fun prepareHandle(){
         handleGetStateCross = View.OnTouchListener { view, motionEvent ->
             when (motionEvent.action){
@@ -118,6 +125,24 @@ class GameManager : Fragment() {
                 gameBinding.btnEraser.background = null
             }
         }
+
+        handleBackHome = View.OnClickListener{
+            showSaveConfirmationDialog()
+        }
+    }
+
+    private fun showSaveConfirmationDialog(){
+        AlertDialog.Builder(requireContext())
+            .setTitle("Save progress?")
+            .setMessage("Do you want to save your progress before exiting?")
+            .setPositiveButton("Save"){ _,_ ->
+                viewModel.updateProgress(stitchView.getProgress())
+                requireActivity().supportFragmentManager.popBackStack()
+            }.setNegativeButton("Don't save"){_,_ ->
+                requireActivity().supportFragmentManager.popBackStack()
+            }.setNeutralButton("Cancle"){dialog,_ ->
+                dialog.dismiss()
+            }.show()
     }
 
     fun prepareColor(colorPalette: List<Int>){
