@@ -4,14 +4,17 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.onNavDestinationSelected
+import androidx.savedstate.SavedState
 import com.example.crossstitch.R
 import com.example.crossstitch.databinding.ActivityMainBinding
 import com.example.crossstitch.model.entity.GameProgress
@@ -53,7 +56,15 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.fragmentContainer) as NavHostFragment
         navController = navHostFragment.navController
         setSupportActionBar(mainBinding.toolbar)
-//        supportFragmentManager.beginTransaction().replace(R.id.fragment, PatternMenu()).commit()
+        navController!!.addOnDestinationChangedListener(object : NavController.OnDestinationChangedListener{
+            override fun onDestinationChanged(
+                controller: NavController,
+                destination: NavDestination,
+                arguments: SavedState?
+            ) {
+                updateOnMenu(destination)
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -67,5 +78,22 @@ class MainActivity : AppCompatActivity() {
                 it
             )
         } == true
+    }
+
+    fun updateOnMenu(destination: NavDestination){
+        when(destination.id){
+            R.id.patternMenu -> {
+                mainBinding.toolbar.menu.findItem(R.id.patternMenu).setIcon(R.drawable.interests_24px)
+                mainBinding.toolbar.menu.findItem(R.id.ownPatternMenu).setIcon(R.drawable.photo_library_24px_default)
+            }
+            R.id.ownPatternMenu -> {
+                mainBinding.toolbar.menu.findItem(R.id.patternMenu).setIcon(R.drawable.interests_24px_default)
+                mainBinding.toolbar.menu.findItem(R.id.ownPatternMenu).setIcon(R.drawable.photo_library_24px)
+            }
+            else -> {
+                mainBinding.toolbar.menu.findItem(R.id.patternMenu).setIcon(R.drawable.interests_24px_default)
+                mainBinding.toolbar.menu.findItem(R.id.ownPatternMenu).setIcon(R.drawable.photo_library_24px_default)
+            }
+        }
     }
 }

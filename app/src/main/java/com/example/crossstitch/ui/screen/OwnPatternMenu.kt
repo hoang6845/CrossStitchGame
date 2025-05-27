@@ -1,12 +1,10 @@
 package com.example.crossstitch.ui.screen
 
-import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -16,7 +14,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.crossstitch.R
-import com.example.crossstitch.converter.Converter
 import com.example.crossstitch.converter.ConverterPixel
 import com.example.crossstitch.databinding.FragmentOwnPatternMenuBinding
 import com.example.crossstitch.repository.GameProgressRepository
@@ -30,7 +27,6 @@ private lateinit var ownPatternBinding: FragmentOwnPatternMenuBinding
 class OwnPatternMenu : Fragment() {
     private var handleAddImage:View.OnClickListener?=null
     var adapter: PatternAdapter? = null
-    private val REQUEST_CODE_PICK_IMAGE = 1001
     var navController: NavController? = null
     private lateinit var viewModel: PatternViewModel
     private lateinit var imageViewModel: ImageViewModel
@@ -87,7 +83,7 @@ class OwnPatternMenu : Fragment() {
         })
 
         viewModel.listGameProgressLiveData.observe(viewLifecycleOwner, {
-                list -> adapter!!.listProgress = list
+                list -> adapter!!.listProgress = list.takeLast(viewModel.listOwnPatternLiveData.value.size)
             adapter!!.notifyDataSetChanged()
         })
 
@@ -120,7 +116,7 @@ class OwnPatternMenu : Fragment() {
 
         }
         val itemTouchHelper = ItemTouchHelper(i)
-        itemTouchHelper.attachToRecyclerView(patternViewBinding.rv)
+        itemTouchHelper.attachToRecyclerView(ownPatternBinding.rv)
     }
 
     fun prepareHandle(){
