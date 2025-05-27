@@ -12,7 +12,7 @@
     <FrameLayout
         android:id="@+id/MainBoardGame"
         android:layout_width="match_parent"
-        android:layout_height="900px"
+        android:layout_height="1350px"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -92,8 +92,7 @@
             android:id="@+id/gridlayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:columnCount="6"
-            android:rowCount="5"
+            android:numColumns="auto_fit"
             android:padding="8dp"
             android:layout_weight="1"
             ></GridLayout>

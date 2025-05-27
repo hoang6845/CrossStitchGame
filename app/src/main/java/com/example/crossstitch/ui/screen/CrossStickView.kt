@@ -84,6 +84,14 @@ class CrossStitchView @JvmOverloads constructor(
         selectedColor = color
     }
 
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+        cacheBitmap?.recycle()
+        cacheBitmap = null
+        cacheCanvas = null
+        invalidate()
+    }
+
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
@@ -98,6 +106,7 @@ class CrossStitchView @JvmOverloads constructor(
             }
             canvas.drawBitmap(cacheBitmap!!, 0f, 0f, null)
         }
+        Log.d("check", "onDraw: +${width} + ${height}")
     }
 
     private var isEraserMode: Boolean = false

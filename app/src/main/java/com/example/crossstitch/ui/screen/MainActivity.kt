@@ -65,6 +65,7 @@ class MainActivity : AppCompatActivity() {
                 updateOnMenu(destination)
             }
         })
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

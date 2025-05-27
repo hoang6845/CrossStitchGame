@@ -2,9 +2,11 @@ package com.example.crossstitch.ui.screen
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -180,8 +182,8 @@ class GameManager : Fragment() {
                     setColor(color)
                 }
                 background = normalDrawable
-                layoutParams = ViewGroup.MarginLayoutParams(92, 92).apply {
-                    setMargins(8, 8, 8, 8)
+                layoutParams = ViewGroup.MarginLayoutParams(52.dp, 52.dp).apply {
+                    setMargins(6.dp, 6.dp, 6.dp, 6.dp)
                 }
 
             }
@@ -217,9 +219,21 @@ class GameManager : Fragment() {
             count++;
             cardView.addView(textView)
             gameBinding.gridlayout.addView(cardView)
+
         }
+        // Tính toán số cột dựa theo chiều rộng màn hình
+        val displayMetrics = Resources.getSystem().displayMetrics
+        val screenWidth = displayMetrics.widthPixels
+        val cellSize = 52.dp + 6.dp * 2  // Kích thước mỗi ô + margin 2 bên
+        val columnCount = screenWidth / cellSize
+        Log.d("check", "prepareColor: ${columnCount}")
+        gameBinding.gridlayout.columnCount = columnCount
         stitchView.setMapSymbols(map)
+        Log.d("check", "prepareColor: ${1050.dp}")
     }
+
+    val Int.dp: Int
+        get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
 
 }

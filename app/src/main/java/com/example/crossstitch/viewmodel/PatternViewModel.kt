@@ -91,7 +91,7 @@ class PatternViewModel(private val patternRepository: PatternRepository, private
         gameProgressRepository.findOne(patternId)
     }
 
-    fun addProgress(progress: GameProgress)  = viewModelScope.launch {
+     suspend fun addProgress(progress: GameProgress) {
         gameProgressRepository.addGameProgress(progress)
     }
 
