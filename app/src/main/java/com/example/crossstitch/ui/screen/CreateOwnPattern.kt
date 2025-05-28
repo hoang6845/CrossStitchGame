@@ -108,11 +108,8 @@ class CreateOwnPattern : Fragment() {
                             navController!!.popBackStack()
                         }
                         .create()
-
                     dialog.show()
-
                     var count = 3
-
                     runnable = object : Runnable {
                         override fun run() {
                             if (count > 1) {

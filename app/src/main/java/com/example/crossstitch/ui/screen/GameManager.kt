@@ -14,12 +14,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.crossstitch.R
 import com.example.crossstitch.databinding.FragmentGameManagerBinding
+import com.example.crossstitch.di.ScreenSize
 import com.example.crossstitch.model.entity.GameProgress
 import com.example.crossstitch.model.entity.PatternData
 import com.example.crossstitch.repository.GameProgressRepository
@@ -98,6 +100,8 @@ class GameManager : Fragment() {
             viewModel.updateProgress(stitchView.getProgress())
         })
 
+        gameBinding.gridlayout.getChildAt(0).performClick()
+
 //        lifecycleScope.launch {
 //            val bitmap = BitmapFactory.decodeResource(requireContext().resources, R.drawable.yasuo)
 //            var converterPixel:ConverterPixel = ConverterPixel()
@@ -171,6 +175,7 @@ class GameManager : Fragment() {
         }
         var count = 0
         var listSymbols = resources.getStringArray(R.array.symbol_list)
+        var cardSize = (ScreenSize.widthDp/6-12).dp
         for (color in colorPalette){
             val cardView = CardView(requireContext()).apply {
                 radius = 16f
@@ -182,8 +187,8 @@ class GameManager : Fragment() {
                     setColor(color)
                 }
                 background = normalDrawable
-                layoutParams = ViewGroup.MarginLayoutParams(52.dp, 52.dp).apply {
-                    setMargins(6.dp, 6.dp, 6.dp, 6.dp)
+                layoutParams = ViewGroup.MarginLayoutParams(cardSize.toInt(), cardSize.toInt()).apply {
+                    setMargins(6f.dp.toInt(), 6f.dp.toInt(), 6f.dp.toInt(), 6f.dp.toInt())
                 }
 
             }
@@ -222,18 +227,14 @@ class GameManager : Fragment() {
 
         }
         // Tính toán số cột dựa theo chiều rộng màn hình
-        val displayMetrics = Resources.getSystem().displayMetrics
-        val screenWidth = displayMetrics.widthPixels
-        val cellSize = 52.dp + 6.dp * 2  // Kích thước mỗi ô + margin 2 bên
-        val columnCount = screenWidth / cellSize
+        val columnCount = ScreenSize.widthDp.dp / cardSize
         Log.d("check", "prepareColor: ${columnCount}")
-        gameBinding.gridlayout.columnCount = columnCount
+        gameBinding.gridlayout.columnCount = columnCount.toInt()
         stitchView.setMapSymbols(map)
-        Log.d("check", "prepareColor: ${1050.dp}")
     }
 
-    val Int.dp: Int
-        get() = (this * Resources.getSystem().displayMetrics.density).toInt()
+    val Float.dp: Float
+        get() = (this * resources.displayMetrics.density)
 
 
 }

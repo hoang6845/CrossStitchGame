@@ -17,6 +17,7 @@ import androidx.navigation.ui.onNavDestinationSelected
 import androidx.savedstate.SavedState
 import com.example.crossstitch.R
 import com.example.crossstitch.databinding.ActivityMainBinding
+import com.example.crossstitch.di.ScreenSize
 import com.example.crossstitch.model.entity.GameProgress
 import com.example.crossstitch.model.entity.UserManager
 import com.example.crossstitch.repository.GameProgressRepository
@@ -52,6 +53,7 @@ class MainActivity : AppCompatActivity() {
             // Nếu lần đầu, đặt tên mặc định và lưu lại
             userManager.saveUserName("Hoang")
         }
+
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.fragmentContainer) as NavHostFragment
         navController = navHostFragment.navController
@@ -65,6 +67,10 @@ class MainActivity : AppCompatActivity() {
                 updateOnMenu(destination)
             }
         })
+
+        val displayMetrics = resources.displayMetrics
+        ScreenSize.widthDp = displayMetrics.widthPixels/displayMetrics.density
+        ScreenSize.heightDp = displayMetrics.heightPixels/displayMetrics.density
 
     }
 

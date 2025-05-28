@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import com.example.crossstitch.R
+import com.example.crossstitch.di.ScreenSize
 import com.example.crossstitch.model.entity.GameProgress
 import com.example.crossstitch.model.entity.PatternData
 
@@ -21,13 +22,14 @@ class CrossStitchView @JvmOverloads constructor(
     var gameProgress: GameProgress,
     attrs: AttributeSet? = null,
 ) : View(context, attrs) {
-
+    val Float.dp: Float
+        get() = (this * resources.displayMetrics.density)
     private var drawMode = false
 
     private val numRows = resources.getInteger(R.integer.max_rows)
     private val numCols = resources.getInteger(R.integer.max_columns)
 
-    private val numDrawCols = 16
+    private var numDrawCols = 16
     private val numDrawRows = 20
 
     private var cellSize = 0f
@@ -67,6 +69,13 @@ class CrossStitchView @JvmOverloads constructor(
         this.myCrossStitchGrid = gameProgress.myCrossStitchGrid.map { it.clone() }.toTypedArray()
         this.completedCells = gameProgress.completedCells
         this.mistake = gameProgress.mistake
+
+        cellSize = (ScreenSize.widthDp / numCols).dp
+        drawCellSize = ((cellSize*numRows)/ numDrawRows)
+        numDrawCols = (ScreenSize.widthDp/drawCellSize!!).dp.toInt()
+
+        gameBinding.MainBoardGame.layoutParams.height = (cellSize*numRows).toInt()
+        gameBinding.MainBoardGame.requestLayout()
     }
 
     fun getProgress(): GameProgress {
@@ -106,7 +115,8 @@ class CrossStitchView @JvmOverloads constructor(
             }
             canvas.drawBitmap(cacheBitmap!!, 0f, 0f, null)
         }
-        Log.d("check", "onDraw: +${width} + ${height}")
+        Log.d("check", "onDraw: +${(ScreenSize.widthDp/numCols).dp} + ${cellSize*150}")
+        if (drawCellSize!=null)Log.d("check", "onDraw: +${(ScreenSize.widthDp/numDrawCols).dp} + ${drawCellSize!!*numDrawCols}")
     }
 
     private var isEraserMode: Boolean = false
@@ -184,8 +194,6 @@ class CrossStitchView @JvmOverloads constructor(
 
 
     private fun drawMainGrid(canvas: Canvas) {
-        cellSize = (width / numCols).toFloat()
-
         for (row in 0 until numRows) {
             for (col in 0 until numCols) {
 
@@ -233,7 +241,7 @@ class CrossStitchView @JvmOverloads constructor(
     private fun openDrawPage(positionX: Float, positionY: Float, canvas: Canvas) {
         val col = (positionX / cellSize).toInt()
         val row = (positionY / cellSize).toInt() //o hien tai
-        drawCellSize = (width / numDrawCols).toFloat() //45
+
         startCol = when (col) {
             in 0..numDrawCols / 2 -> 0
             in numDrawCols / 2 + 1..numCols - numDrawCols / 2 -> col - numDrawCols / 2 - 1
