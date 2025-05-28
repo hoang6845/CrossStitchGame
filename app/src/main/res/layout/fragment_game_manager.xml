@@ -66,6 +66,13 @@
                     android:layout_height="wrap_content"
                     android:src="@drawable/ink_eraser_24px">
                 </ImageButton>
+                <ImageButton
+                    android:id="@+id/btn_aim"
+                    android:layout_width="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/motion_sensor_active_24px">
+                </ImageButton>
 
                 <ImageButton
                     android:id="@+id/btn_fullscreen"

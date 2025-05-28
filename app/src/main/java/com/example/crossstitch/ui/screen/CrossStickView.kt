@@ -4,12 +4,15 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import android.graphics.Matrix
 import android.graphics.Paint
+import android.graphics.PointF
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffXfermode
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
+import android.view.ScaleGestureDetector
 import android.view.View
 import com.example.crossstitch.R
 import com.example.crossstitch.di.ScreenSize
@@ -42,6 +45,8 @@ class CrossStitchView @JvmOverloads constructor(
     private var touchDownX = 0f
     private var touchDownY = 0f
     private val touchSlop = 10f
+
+    private var lastFingerPositions: Pair<PointF, PointF>? = null
 
     private var grid: Array<IntArray>
     private var myCrossStitchGrid: Array<IntArray>
@@ -76,6 +81,7 @@ class CrossStitchView @JvmOverloads constructor(
 
         gameBinding.MainBoardGame.layoutParams.height = (cellSize*numRows).toInt()
         gameBinding.MainBoardGame.requestLayout()
+
     }
 
     fun getProgress(): GameProgress {
@@ -126,6 +132,7 @@ class CrossStitchView @JvmOverloads constructor(
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
+
         if (!drawMode) {
             when (event.action) {
                 MotionEvent.ACTION_DOWN -> {
@@ -145,6 +152,43 @@ class CrossStitchView @JvmOverloads constructor(
                 }
             }
             return false
+        }
+        if (event.pointerCount == 2){
+            Log.d("check 2 ngon", "onTouchEvent: 2 ngon")
+            val point1 = PointF(event.getX(0), event.getY(0))
+            val point2 = PointF(event.getX(1), event.getY(1))
+
+            Log.d("check 2 ngon", "Action: ${event.actionMasked}") // Thêm log này
+
+            when (event.actionMasked){
+                MotionEvent.ACTION_MOVE -> {
+                    Log.d("check 2 ngon", "ACTION_MOVE detected") // Thêm log này
+                    lastFingerPositions?.let { (last1, last2) ->
+                        Log.d("check 2 ngon", "lastFingerPositions is not null") // Thêm log này
+                        val currentX = (point1.x + point2.x)/2
+                        val currentY = (point1.y + point2.y)/2
+                        var lastCenterX = (last1.x + last2.x) / 2
+                        var lastCenterY = (last1.y + last2.y) / 2
+                        val dx = currentX - lastCenterX
+                        val dy = currentY - lastCenterY
+                        Log.d("check 2 ngon", "onTouchEvent: ${dx} ${dy}")
+                        lastFingerPositions = Pair(point1, point2)
+                        touchDownX -= dx/3
+                        touchDownY -= dy/3
+                        invalidate()
+
+                    } ?: Log.d("check 2 ngon", "lastFingerPositions is null") // Thêm log này
+                }
+                MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_POINTER_UP -> {
+                    Log.d("check 2 ngon", "ACTION_UP/CANCEL/POINTER_UP") // Thêm log này
+                    lastFingerPositions = null
+                }
+                MotionEvent.ACTION_POINTER_DOWN -> {
+                    Log.d("check 2 ngon", "ACTION_POINTER_DOWN") // Thêm log này
+                    lastFingerPositions = Pair(point1, point2)
+                }
+            }
+            return true
         }
         if (event.action == MotionEvent.ACTION_DOWN || event.action == MotionEvent.ACTION_MOVE) {
             val col = (event.x / drawCellSize!!).toInt()
@@ -177,6 +221,18 @@ class CrossStitchView @JvmOverloads constructor(
             }
         }
         return true
+    }
+
+    fun AimUnCompletedCeils(){
+        drawMode = true
+        for (row in 0 until numRows){
+            for (col in 0 until numCols){
+                if (myCrossStitchGrid[row][col]==this.patternData.gridColor[row][col]) continue
+                touchDownX = col*cellSize
+                touchDownY = row*cellSize
+                invalidate()
+            }
+        }
     }
 
     private fun updateProgress(row: Int, col: Int, newColor: Int) {

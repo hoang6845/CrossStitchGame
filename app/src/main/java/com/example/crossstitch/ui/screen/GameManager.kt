@@ -33,6 +33,8 @@ class GameManager : Fragment() {
     private lateinit var stitchView: CrossStitchView
     private var selectedCardView:CardView? = null
     private var selectedColor:Int? = null
+
+    private var handleAimCellNotCompleted :View.OnClickListener? = null
     private var handleGetStateCross:View.OnTouchListener? = null
     private var handleSwitchMode:View.OnClickListener? = null
     private var handleModeEraser:View.OnClickListener? =null
@@ -92,6 +94,8 @@ class GameManager : Fragment() {
         gameBinding.btnEraser.setOnClickListener(handleModeEraser)
         gameBinding.btnHome.background = null
         gameBinding.btnHome.setOnClickListener(handleBackHome)
+        gameBinding.btnAim.background = null
+        gameBinding.btnAim.setOnClickListener(handleAimCellNotCompleted)
 
         currentPattern?.collorPalette?.let { prepareColor(it) }
 
@@ -101,6 +105,7 @@ class GameManager : Fragment() {
         })
 
         gameBinding.gridlayout.getChildAt(0).performClick()
+
 
 //        lifecycleScope.launch {
 //            val bitmap = BitmapFactory.decodeResource(requireContext().resources, R.drawable.yasuo)
@@ -148,6 +153,10 @@ class GameManager : Fragment() {
 
         handleBackHome = View.OnClickListener{
             showSaveConfirmationDialog()
+        }
+
+        handleAimCellNotCompleted = View.OnClickListener {
+            stitchView.AimUnCompletedCeils()
         }
     }
 
