@@ -17,6 +17,7 @@ import androidx.navigation.ui.onNavDestinationSelected
 import androidx.savedstate.SavedState
 import com.example.crossstitch.R
 import com.example.crossstitch.databinding.ActivityMainBinding
+import com.example.crossstitch.di.Constants
 import com.example.crossstitch.di.ScreenSize
 import com.example.crossstitch.model.entity.GameProgress
 import com.example.crossstitch.model.entity.UserManager
@@ -71,6 +72,9 @@ class MainActivity : AppCompatActivity() {
         val displayMetrics = resources.displayMetrics
         ScreenSize.widthDp = displayMetrics.widthPixels/displayMetrics.density
         ScreenSize.heightDp = displayMetrics.heightPixels/displayMetrics.density
+        if (ScreenSize.widthDp>600){
+            ScreenSize.cellSizeDp = (ScreenSize.heightDp/Constants.NUMROWS)
+        }
 
     }
 

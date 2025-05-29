@@ -51,6 +51,7 @@ class GameManager : Fragment() {
 
         navController = findNavController()
 
+
         val factory = PatternViewModel.providerFactory(PatternRepository.getInstance(requireContext()), GameProgressRepository.getInstance(requireContext()))
         viewModel = ViewModelProvider(requireActivity(), factory).get(PatternViewModel::class.java)
 
@@ -79,8 +80,7 @@ class GameManager : Fragment() {
         gameBinding = FragmentGameManagerBinding.inflate(inflater, container, false)
 
         stitchView = currentPattern?.let { currentProgress?.let { it1 ->
-            CrossStitchView(requireContext(), it,
-                it1
+            CrossStitchView(requireContext(), it, it1, viewModel
             )
         } }!!
 
@@ -104,6 +104,16 @@ class GameManager : Fragment() {
             viewModel.updateProgress(stitchView.getProgress())
         })
 
+        viewModel.currentProgress.observe(viewLifecycleOwner, { value ->
+            gameBinding.progressBar?.progress = value
+            gameBinding.completedCells?.setText("Completed: ${value/180}%")
+
+        })
+
+        viewModel.currentMistake.observe(viewLifecycleOwner, {value ->
+            gameBinding.mistake?.setText("Mistake: "+value.toString())
+        })
+
         gameBinding.gridlayout.getChildAt(0).performClick()
 
 
@@ -114,6 +124,7 @@ class GameManager : Fragment() {
 //        }
         return gameBinding.root
     }
+
 
     @SuppressLint("ClickableViewAccessibility")
     fun prepareHandle(){
@@ -184,7 +195,7 @@ class GameManager : Fragment() {
         }
         var count = 0
         var listSymbols = resources.getStringArray(R.array.symbol_list)
-        var cardSize = (ScreenSize.widthDp/6-12).dp
+        var cardSize = (ScreenSize.getSettingWidthDp()/6-12).dp
         for (color in colorPalette){
             val cardView = CardView(requireContext()).apply {
                 radius = 16f
@@ -221,6 +232,9 @@ class GameManager : Fragment() {
                 selectedColor = color
 
                 stitchView.setSelectedColor(selectedColor!!)
+                if (stitchView.isEraserMode()){
+                    gameBinding.btnEraser.performClick()
+                }
 
             })
 
@@ -236,8 +250,9 @@ class GameManager : Fragment() {
 
         }
         // Tính toán số cột dựa theo chiều rộng màn hình
-        val columnCount = ScreenSize.widthDp.dp / cardSize
+        val columnCount = ScreenSize.widthDp.dp / (cardSize+12f.dp)
         Log.d("check", "prepareColor: ${columnCount}")
+        Log.d("check", "prepareColor: ${cardSize}")
         gameBinding.gridlayout.columnCount = columnCount.toInt()
         stitchView.setMapSymbols(map)
     }

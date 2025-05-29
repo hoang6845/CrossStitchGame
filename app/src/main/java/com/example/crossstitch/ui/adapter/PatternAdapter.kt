@@ -25,6 +25,7 @@ class PatternAdapter(var Irv:IPatternRv, var listPattern: List<PatternData>,var 
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        if (position >= listPattern.size || position >= listProgress.size) return
         var p = listPattern?.get(position)
         var g = listProgress?.get(position)
         var viewHolder: PatternHolder = holder as PatternHolder

@@ -33,6 +33,20 @@ class PatternViewModel(private val patternRepository: PatternRepository, private
     val listGameProgress = _listProgress.asStateFlow()
     var listGameProgressLiveData = listGameProgress.asLiveData()
 
+    private val _currentProgress = MutableLiveData<Int>(-1)
+    val currentProgress: LiveData<Int>get() = _currentProgress
+
+    fun setProgress(value:Int){
+        _currentProgress.value= value
+    }
+
+    private val _currentMistake = MutableLiveData<Int>(-1)
+    val currentMistake: LiveData<Int>get() = _currentMistake
+
+    fun setMistake(value:Int){
+        _currentMistake.value= value
+    }
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
             patternRepository.getAll().distinctUntilChanged().collect{list->

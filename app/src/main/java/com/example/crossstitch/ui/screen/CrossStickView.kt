@@ -4,7 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
-import android.graphics.Matrix
 import android.graphics.Paint
 import android.graphics.PointF
 import android.graphics.PorterDuff
@@ -12,28 +11,30 @@ import android.graphics.PorterDuffXfermode
 import android.util.AttributeSet
 import android.util.Log
 import android.view.MotionEvent
-import android.view.ScaleGestureDetector
 import android.view.View
 import com.example.crossstitch.R
+import com.example.crossstitch.di.Constants
 import com.example.crossstitch.di.ScreenSize
 import com.example.crossstitch.model.entity.GameProgress
 import com.example.crossstitch.model.entity.PatternData
+import com.example.crossstitch.viewmodel.PatternViewModel
 
 class CrossStitchView @JvmOverloads constructor(
     context: Context,
     private val patternData: PatternData,
     var gameProgress: GameProgress,
+    val viewModel: PatternViewModel,
     attrs: AttributeSet? = null,
 ) : View(context, attrs) {
     val Float.dp: Float
         get() = (this * resources.displayMetrics.density)
     private var drawMode = false
 
-    private val numRows = resources.getInteger(R.integer.max_rows)
-    private val numCols = resources.getInteger(R.integer.max_columns)
+    private val numRows = Constants.NUMROWS
+    private val numCols = Constants.NUMCOLS
 
-    private var numDrawCols = 16
-    private val numDrawRows = 20
+    private var numDrawCols = Constants.NUMDRAWCOLS
+    private val numDrawRows = Constants.NUMDRAWROWS
 
     private var cellSize = 0f
 
@@ -74,13 +75,19 @@ class CrossStitchView @JvmOverloads constructor(
         this.myCrossStitchGrid = gameProgress.myCrossStitchGrid.map { it.clone() }.toTypedArray()
         this.completedCells = gameProgress.completedCells
         this.mistake = gameProgress.mistake
+        viewModel.setProgress(this.completedCells!!)
+        viewModel.setMistake(this.mistake!!)
 
-        cellSize = (ScreenSize.widthDp / numCols).dp
-        drawCellSize = ((cellSize*numRows)/ numDrawRows)
-        numDrawCols = (ScreenSize.widthDp/drawCellSize!!).dp.toInt()
+        cellSize = (ScreenSize.getGameBoardWidthDp() / numCols).dp
+        Log.d("Check layout", "cellsize: ${cellSize}")
+        drawCellSize = ((cellSize * numRows) / numDrawRows)
+        numDrawCols = (ScreenSize.widthDp / drawCellSize!!).dp.toInt()
 
-        gameBinding.MainBoardGame.layoutParams.height = (cellSize*numRows).toInt()
-        gameBinding.MainBoardGame.requestLayout()
+//
+            gameBinding.MainBoardGame.layoutParams.height = (cellSize * numRows).toInt()
+            gameBinding.MainBoardGame.layoutParams.width = (cellSize*numCols).toInt()
+            gameBinding.MainBoardGame.requestLayout()
+//        }
 
     }
 
@@ -121,14 +128,21 @@ class CrossStitchView @JvmOverloads constructor(
             }
             canvas.drawBitmap(cacheBitmap!!, 0f, 0f, null)
         }
-        Log.d("check", "onDraw: +${(ScreenSize.widthDp/numCols).dp} + ${cellSize*150}")
-        if (drawCellSize!=null)Log.d("check", "onDraw: +${(ScreenSize.widthDp/numDrawCols).dp} + ${drawCellSize!!*numDrawCols}")
+        Log.d("check", "onDraw: +${ScreenSize.heightDp.dp} + ${ScreenSize.widthDp.dp} + ${cellSize * 150}")
+        if (drawCellSize != null) Log.d(
+            "check",
+            "onDraw: +${(ScreenSize.widthDp / numDrawCols).dp} + ${drawCellSize!! * numDrawCols}"
+        )
     }
 
     private var isEraserMode: Boolean = false
 
     fun changeEraserMode() {
         isEraserMode = !isEraserMode
+    }
+
+    fun isEraserMode(): Boolean {
+        return isEraserMode
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
@@ -153,36 +167,38 @@ class CrossStitchView @JvmOverloads constructor(
             }
             return false
         }
-        if (event.pointerCount == 2){
+        if (event.pointerCount == 2) {
             Log.d("check 2 ngon", "onTouchEvent: 2 ngon")
             val point1 = PointF(event.getX(0), event.getY(0))
             val point2 = PointF(event.getX(1), event.getY(1))
 
             Log.d("check 2 ngon", "Action: ${event.actionMasked}") // Thêm log này
 
-            when (event.actionMasked){
+            when (event.actionMasked) {
                 MotionEvent.ACTION_MOVE -> {
                     Log.d("check 2 ngon", "ACTION_MOVE detected") // Thêm log này
                     lastFingerPositions?.let { (last1, last2) ->
                         Log.d("check 2 ngon", "lastFingerPositions is not null") // Thêm log này
-                        val currentX = (point1.x + point2.x)/2
-                        val currentY = (point1.y + point2.y)/2
+                        val currentX = (point1.x + point2.x) / 2
+                        val currentY = (point1.y + point2.y) / 2
                         var lastCenterX = (last1.x + last2.x) / 2
                         var lastCenterY = (last1.y + last2.y) / 2
                         val dx = currentX - lastCenterX
                         val dy = currentY - lastCenterY
                         Log.d("check 2 ngon", "onTouchEvent: ${dx} ${dy}")
                         lastFingerPositions = Pair(point1, point2)
-                        touchDownX -= dx/3
-                        touchDownY -= dy/3
+                        touchDownX -= dx / 3
+                        touchDownY -= dy / 3
                         invalidate()
 
                     } ?: Log.d("check 2 ngon", "lastFingerPositions is null") // Thêm log này
                 }
+
                 MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_POINTER_UP -> {
                     Log.d("check 2 ngon", "ACTION_UP/CANCEL/POINTER_UP") // Thêm log này
                     lastFingerPositions = null
                 }
+
                 MotionEvent.ACTION_POINTER_DOWN -> {
                     Log.d("check 2 ngon", "ACTION_POINTER_DOWN") // Thêm log này
                     lastFingerPositions = Pair(point1, point2)
@@ -223,13 +239,13 @@ class CrossStitchView @JvmOverloads constructor(
         return true
     }
 
-    fun AimUnCompletedCeils(){
+    fun AimUnCompletedCeils() {
         drawMode = true
-        for (row in 0 until numRows){
-            for (col in 0 until numCols){
-                if (myCrossStitchGrid[row][col]==this.patternData.gridColor[row][col]) continue
-                touchDownX = col*cellSize
-                touchDownY = row*cellSize
+        for (row in 0 until numRows) {
+            for (col in 0 until numCols) {
+                if (myCrossStitchGrid[row][col] == this.patternData.gridColor[row][col]) continue
+                touchDownX = col * cellSize
+                touchDownY = row * cellSize
                 invalidate()
             }
         }
@@ -246,6 +262,8 @@ class CrossStitchView @JvmOverloads constructor(
                 this.mistake = this.mistake!! + 1
             }
         }
+        viewModel.setProgress(this.completedCells!!)
+        viewModel.setMistake(this.mistake!!)
     }
 
 

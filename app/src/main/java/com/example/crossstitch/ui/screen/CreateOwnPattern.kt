@@ -35,6 +35,7 @@ class CreateOwnPattern : Fragment() {
     private var handleSave:View.OnClickListener? = null
     private var currentSeekBarValue:Int?=24
     private var paletteSelected: List<Int>? = null
+    private var gridColorSelected: Array<IntArray>? = null
     private var navController:NavController?=null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,6 +50,7 @@ class CreateOwnPattern : Fragment() {
         val converter = ConverterPixel()
         createOwnPatternBinding.img.setImageBitmap(converter.colorMatrixToBitmap(imageViewModel.grid.value))
         paletteSelected = imageViewModel.palette.value
+        gridColorSelected = imageViewModel.grid.value
         createOwnPatternBinding.seekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 currentSeekBarValue = p1
@@ -67,8 +69,8 @@ class CreateOwnPattern : Fragment() {
                             it
                         )
                     }
-                imageViewModel.setGrid(converter.quantizeColors(imageViewModel.grid.value, currentSeekBarValue!!, paletteSelected!!))
-                createOwnPatternBinding.img.setImageBitmap(converter.colorMatrixToBitmap(imageViewModel.grid.value))
+                gridColorSelected = converter.quantizeColors(imageViewModel.grid.value, currentSeekBarValue!!, paletteSelected!!)
+                createOwnPatternBinding.img.setImageBitmap(converter.colorMatrixToBitmap(gridColorSelected!!))
 //                Log.d("demmau", "onStopTrackingTouch: "+countUniqueColors(imageViewModel.grid.value))
             }
         })
@@ -85,10 +87,13 @@ class CreateOwnPattern : Fragment() {
         var converterP = ConverterPixel()
         var idCreated: Long? = null
         handleSave = View.OnClickListener {
+
             imageViewModel.setBitmap(converterP.colorMatrixToBitmap(imageViewModel.grid.value))
             imageViewModel.setPalette(paletteSelected!!)
+            imageViewModel.setGrid(gridColorSelected!!)
+
             CoroutineScope(Dispatchers.IO).launch {
-                idCreated = viewModel.addPattern(PatternData(id = null, name = "TEST", collorPalette = paletteSelected!!, gridColor = imageViewModel.grid.value, image = converter.bitmapToByteArray(imageViewModel.bitmap.value), authorName = "Hoang")).await()
+                idCreated = viewModel.addPattern(PatternData(id = null, name = createOwnPatternBinding.nameImage.text.toString(), collorPalette = paletteSelected!!, gridColor = imageViewModel.grid.value, image = converter.bitmapToByteArray(converterP.colorMatrixToBitmap(imageViewModel.grid.value)), authorName = "Hoang")).await()
                 viewModel.addProgress(GameProgress(
                     id = 0, patternId = idCreated!!.toInt(),
                     myCrossStitchGrid =  Array(resources.getInteger(R.integer.max_rows)) { IntArray(resources.getInteger(R.integer.max_columns)) { Int.MIN_VALUE } },
