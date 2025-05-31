@@ -1,10 +1,8 @@
 package com.example.crossstitch.ui.screen
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -19,12 +17,11 @@ import com.example.crossstitch.R
 import com.example.crossstitch.databinding.ActivityMainBinding
 import com.example.crossstitch.di.Constants
 import com.example.crossstitch.di.ScreenSize
-import com.example.crossstitch.model.entity.GameProgress
-import com.example.crossstitch.model.entity.UserManager
 import com.example.crossstitch.repository.GameProgressRepository
 import com.example.crossstitch.repository.PatternRepository
 import com.example.crossstitch.viewmodel.ImageViewModel
 import com.example.crossstitch.viewmodel.PatternViewModel
+
 lateinit var mainBinding: ActivityMainBinding
 class MainActivity : AppCompatActivity() {
     lateinit var patternViewModel: PatternViewModel
@@ -45,15 +42,6 @@ class MainActivity : AppCompatActivity() {
         patternViewModel = ViewModelProvider(this, factory).get(PatternViewModel::class.java)
 
         imageViewModel = ViewModelProvider(this).get(ImageViewModel::class.java)
-
-
-        var userManager = UserManager(this)
-
-        // Kiểm tra xem có phải lần đầu tiên vào app không
-        if (userManager.isFirstTimeUser()) {
-            // Nếu lần đầu, đặt tên mặc định và lưu lại
-            userManager.saveUserName("Hoang")
-        }
 
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.fragmentContainer) as NavHostFragment

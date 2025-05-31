@@ -55,13 +55,10 @@ class ConverterPixel {
     }
 
     fun KMeansColor(grid: Array<IntArray>, maxColors: Int): List<Int> {
-        // Bước 1: Trích xuất các màu Int từ grid
         val colorList: List<Int> = grid.flatMap { it.toList() }
 
-        // Bước 2: Lọc các màu duy nhất
         val uniqueColors: List<Int> = colorList.distinct()
         Log.d("demm", "KMeansColor: ${uniqueColors.size}")
-        // Bước 3: Chuyển sang dạng [R, G, B] để làm KMeans
         val colorData: Array<DoubleArray> = uniqueColors.map { color ->
             doubleArrayOf(
                 Color.red(color).toDouble(),
@@ -72,15 +69,13 @@ class ConverterPixel {
 
         Log.d("TAG", "KMeansColor: unique=${colorData.size} ${maxColors}")
 
-        // Bước 4: Chạy KMeans
-        val clusterCount = minOf(maxColors, colorData.size)  // Đề phòng số màu ít hơn maxColors
+        val clusterCount = minOf(maxColors, colorData.size)
         val kmeans = KMeans.fit(colorData, clusterCount)
         Log.d("TAG", "KMeansColor after: ${kmeans.size}")
 
-        // Bước 5: Lấy tâm cụm (centroid) và chuyển về Int màu
         return kmeans.centroids.map { center ->
             val (r, g, b) = center.map { it.toInt().coerceIn(0, 255) }
-            Color.rgb(r, g, b)  // Trả về Int theo Android
+            Color.rgb(r, g, b)
         }
     }
 
