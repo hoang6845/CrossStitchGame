@@ -98,7 +98,7 @@
                     android:layout_width="wrap_content"
                     android:layout_gravity="center"
                     android:layout_height="wrap_content"
-                    android:src="@drawable/house_24px">
+                    android:src="@drawable/arrow_back_24px">
                 </ImageButton>
                 <ImageButton
                     android:id="@+id/btn_save"

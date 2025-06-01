@@ -255,11 +255,15 @@ class CrossStitchView @JvmOverloads constructor(
         if (patternData.gridColor[row][col] == myCrossStitchGrid[row][col] && patternData.gridColor[row][col] != newColor) {
             this.completedCells = this.completedCells!! - 1
             this.mistake = this.mistake!! + 1
-        } else if (patternData.gridColor[row][col] != myCrossStitchGrid[row][col]) {
+        }else if (myCrossStitchGrid[row][col]== Int.MIN_VALUE){
             if (patternData.gridColor[row][col] == newColor) {
                 this.completedCells = this.completedCells!! + 1
             } else {
                 this.mistake = this.mistake!! + 1
+            }
+        } else if (patternData.gridColor[row][col] != myCrossStitchGrid[row][col]) {
+            if (patternData.gridColor[row][col] == newColor) {
+                this.completedCells = this.completedCells!! + 1
             }
         }
         viewModel.setProgress(this.completedCells!!)

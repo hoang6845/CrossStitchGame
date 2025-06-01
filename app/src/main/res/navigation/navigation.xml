@@ -3,43 +3,48 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/patternMenu">
+    app:startDestination="@id/menuPatternContainer">
 
+    <!-- Thay thế: menuPatternContainer là start destination -->
     <fragment
-        android:id="@+id/patternMenu"
-        android:name="com.example.crossstitch.ui.screen.PatternMenu"
-        android:label="fragment_pattern_menu"
-        tools:layout="@layout/fragment_pattern_menu" >
+        android:id="@+id/menuPatternContainer"
+        android:name="com.example.crossstitch.ui.screen.menuPatternContainer"
+        android:label="fragment_menu_pattern_container"
+        tools:layout="@layout/fragment_menu_pattern_container">
+
+        <!-- Các action nếu cần điều hướng từ đây -->
         <action
-            android:id="@+id/action_patternMenu_to_gameManager"
+            android:id="@+id/action_menuPatternContainer_to_gameManager"
             app:destination="@id/gameManager" />
         <action
-            android:id="@+id/action_patternMenu_to_ownPatternMenu"
+            android:id="@+id/action_menuPatternContainer_to_ownPatternMenu"
             app:destination="@id/ownPatternMenu" />
     </fragment>
+
     <fragment
         android:id="@+id/gameManager"
         android:name="com.example.crossstitch.ui.screen.GameManager"
         android:label="fragment_game_manager"
         tools:layout="@layout/fragment_game_manager" >
         <action
-            android:id="@+id/action_gameManager_to_patternMenu"
-            app:destination="@id/patternMenu" />
+            android:id="@+id/action_gameManager_to_menuPatternContainer"
+            app:destination="@id/menuPatternContainer" />
         <argument
-            android:name="position"
+            android:name="patternId"
             app:argType="integer" />
         <argument
             android:name="type"
             app:argType="string" />
     </fragment>
+
     <fragment
         android:id="@+id/ownPatternMenu"
         android:name="com.example.crossstitch.ui.screen.OwnPatternMenu"
         android:label="fragment_own_pattern_menu"
         tools:layout="@layout/fragment_own_pattern_menu" >
         <action
-            android:id="@+id/action_ownPatternMenu_to_patternMenu"
-            app:destination="@id/patternMenu" />
+            android:id="@+id/action_ownPatternMenu_to_menuPatternContainer"
+            app:destination="@id/menuPatternContainer" />
         <action
             android:id="@+id/action_ownPatternMenu_to_gameManager"
             app:destination="@id/gameManager" />
@@ -47,6 +52,7 @@
             android:id="@+id/action_ownPatternMenu_to_createOwnPattern"
             app:destination="@id/createOwnPattern" />
     </fragment>
+
     <fragment
         android:id="@+id/createOwnPattern"
         android:name="com.example.crossstitch.ui.screen.CreateOwnPattern"

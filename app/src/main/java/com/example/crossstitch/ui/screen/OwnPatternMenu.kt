@@ -2,6 +2,7 @@ package com.example.crossstitch.ui.screen
 
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,6 +17,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.crossstitch.R
 import com.example.crossstitch.converter.ConverterPixel
 import com.example.crossstitch.databinding.FragmentOwnPatternMenuBinding
+import com.example.crossstitch.model.entity.GameProgress
+import com.example.crossstitch.model.entity.PatternData
 import com.example.crossstitch.repository.GameProgressRepository
 import com.example.crossstitch.repository.PatternRepository
 import com.example.crossstitch.ui.adapter.PatternAdapter
@@ -61,7 +64,7 @@ class OwnPatternMenu : Fragment() {
         adapter = PatternAdapter(object : IPatternRv {
             override fun onClickItem(position: Int) {
                 val bundle= Bundle()
-                bundle.putInt("position", position)
+                bundle.putInt("patternId", this@OwnPatternMenu.adapter?.listPattern?.get(position)?.id!!)
                 bundle.putString("type", "Own")
                 navController!!.navigate(R.id.gameManager, bundle)
             }
@@ -76,15 +79,14 @@ class OwnPatternMenu : Fragment() {
             false
         )
 
-        viewModel.listOwnPatternLiveData.observe(viewLifecycleOwner, {
-            list -> adapter!!.listPattern = list
-            adapter!!.listState = MutableList(list.size){true}
-            adapter!!.notifyDataSetChanged()
+        updateAdapter(viewModel.listPatternLiveData.value?: emptyList(), viewModel.listGameProgressLiveData.value?: emptyList())
+
+        viewModel.listPatternLiveData.observe(viewLifecycleOwner, {
+            list -> updateAdapter(list, viewModel.listGameProgressLiveData.value?: emptyList())
         })
 
         viewModel.listGameProgressLiveData.observe(viewLifecycleOwner, {
-                list -> adapter!!.listProgress = list.takeLast(viewModel.listOwnPatternLiveData.value.size)
-            adapter!!.notifyDataSetChanged()
+                list -> updateAdapter(viewModel.listPatternLiveData.value?: emptyList(), list)
         })
 
         prepareSwipedItem()
@@ -122,6 +124,21 @@ class OwnPatternMenu : Fragment() {
     fun prepareHandle(){
         handleAddImage = View.OnClickListener {
             pickImageLauncher.launch("image/*")
+        }
+    }
+
+    private fun updateAdapter(allPattern: List<PatternData>, allProgress: List<GameProgress>){
+        Log.d("my library", "updateAdapter: ${allPattern.size}")
+        val allMyPattern = allPattern.filter { patternData: PatternData -> patternData.authorName != null}
+
+        val listPatternId: List<Int> = allMyPattern.map { it.id!! }
+        var allMyProgress:List<GameProgress> = allProgress.filter { gameProgress: GameProgress -> gameProgress.patternId in listPatternId }
+
+        adapter?.apply {
+            this.listPattern = allMyPattern
+            this.listProgress = allMyProgress
+            this.listState = MutableList(allMyPattern.size) {true}
+            notifyDataSetChanged()
         }
     }
 

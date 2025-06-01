@@ -25,13 +25,20 @@ class PatternViewModel(private val patternRepository: PatternRepository, private
     val listPattern = _listPattern.asStateFlow()
     val listPatternLiveData = listPattern.asLiveData()
 
-    private val _listOwnPattern = MutableStateFlow<List<PatternData>>(emptyList())
-    val listOwnPattern = _listOwnPattern.asStateFlow()
-    val listOwnPatternLiveData = listOwnPattern.asLiveData()
+//    private val _listOwnPattern = MutableStateFlow<List<PatternData>>(emptyList())
+//    val listOwnPattern = _listOwnPattern.asStateFlow()
+//    val listOwnPatternLiveData = listOwnPattern.asLiveData()
 
     private val _listProgress = MutableStateFlow<List<GameProgress>>(emptyList())
     val listGameProgress = _listProgress.asStateFlow()
     var listGameProgressLiveData = listGameProgress.asLiveData()
+
+    private val _categories = MutableLiveData<List<String>>(emptyList())
+    val categories:LiveData<List<String>> get() =  _categories
+
+    fun setCategories(categories: List<String>){
+        _categories.value = categories.toList()
+    }
 
     private val _currentProgress = MutableLiveData<Int>(-1)
     val currentProgress: LiveData<Int>get() = _currentProgress
@@ -68,15 +75,15 @@ class PatternViewModel(private val patternRepository: PatternRepository, private
             }
         }
 
-        viewModelScope.launch(Dispatchers.IO) {
-            patternRepository.getMyPattern().distinctUntilChanged().collect{list->
-                if (list.isNullOrEmpty()){
-                    Log.d("DATABASE", "db is null ")
-                }else{
-                    _listOwnPattern.value = list
-                }
-            }
-        }
+//        viewModelScope.launch(Dispatchers.IO) {
+//            patternRepository.getMyPattern().distinctUntilChanged().collect{list->
+//                if (list.isNullOrEmpty()){
+//                    Log.d("DATABASE", "db is null ")
+//                }else{
+//                    _listOwnPattern.value = list
+//                }
+//            }
+//        }
     }
 
 
@@ -86,7 +93,7 @@ class PatternViewModel(private val patternRepository: PatternRepository, private
     }
 
     fun updatePattern(pattern: PatternData) = viewModelScope.launch {
-        patternRepository.addPattern(pattern)
+        patternRepository.updatePattern(pattern)
     }
 
     fun findPatternAsync(id: Int): Deferred<PatternData?> = viewModelScope.async {
@@ -113,6 +120,9 @@ class PatternViewModel(private val patternRepository: PatternRepository, private
         gameProgressRepository.updateGameProgress(progress)
     }
 
+    suspend fun findAllCategory(): List<String> {
+        return patternRepository.findAllCategory()
+    }
 
 
     companion object {

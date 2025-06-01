@@ -81,16 +81,16 @@ class MainActivity : AppCompatActivity() {
 
     fun updateOnMenu(destination: NavDestination){
         when(destination.id){
-            R.id.patternMenu -> {
-                mainBinding.toolbar.menu.findItem(R.id.patternMenu).setIcon(R.drawable.interests_24px)
+            R.id.menuPatternContainer -> {
+                mainBinding.toolbar.menu.findItem(R.id.menuPatternContainer).setIcon(R.drawable.interests_24px)
                 mainBinding.toolbar.menu.findItem(R.id.ownPatternMenu).setIcon(R.drawable.photo_library_24px_default)
             }
             R.id.ownPatternMenu -> {
-                mainBinding.toolbar.menu.findItem(R.id.patternMenu).setIcon(R.drawable.interests_24px_default)
+                mainBinding.toolbar.menu.findItem(R.id.menuPatternContainer).setIcon(R.drawable.interests_24px_default)
                 mainBinding.toolbar.menu.findItem(R.id.ownPatternMenu).setIcon(R.drawable.photo_library_24px)
             }
             else -> {
-                mainBinding.toolbar.menu.findItem(R.id.patternMenu).setIcon(R.drawable.interests_24px_default)
+                mainBinding.toolbar.menu.findItem(R.id.menuPatternContainer).setIcon(R.drawable.interests_24px_default)
                 mainBinding.toolbar.menu.findItem(R.id.ownPatternMenu).setIcon(R.drawable.photo_library_24px_default)
             }
         }

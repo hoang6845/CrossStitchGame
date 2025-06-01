@@ -11,7 +11,8 @@ data class PatternData(
     var name:String,
     var gridColor: Array<IntArray>,
     var image: ByteArray,
-    var authorName: String? = null
+    var authorName: String? = null,
+    var Category: String? = null
 ) {
 
 }

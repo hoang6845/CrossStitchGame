@@ -7,6 +7,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -17,6 +18,8 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.crossstitch.R
 import com.example.crossstitch.databinding.FragmentPatternMenuBinding
+import com.example.crossstitch.model.entity.GameProgress
+import com.example.crossstitch.model.entity.PatternData
 import com.example.crossstitch.repository.GameProgressRepository
 import com.example.crossstitch.repository.PatternRepository
 import com.example.crossstitch.ui.adapter.PatternAdapter
@@ -28,9 +31,10 @@ class PatternMenu : Fragment() {
     var adapter:PatternAdapter? = null
     var navController: NavController? = null
     private lateinit var viewModel: PatternViewModel
+    private var category:String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        category = arguments?.getString("category")
     }
 
     override fun onCreateView(
@@ -47,7 +51,7 @@ class PatternMenu : Fragment() {
         adapter = PatternAdapter(object : IPatternRv{
             override fun onClickItem(position: Int) {
                 val bundle= Bundle()
-                bundle.putInt("position", position)
+                bundle.putInt("patternId", this@PatternMenu.adapter?.listPattern?.get(position)?.id!!)
                 bundle.putString("type", "App")
                 navController!!.navigate(R.id.gameManager, bundle)
             }
@@ -63,14 +67,12 @@ class PatternMenu : Fragment() {
         )
 
         viewModel.listPatternLiveData.observe(viewLifecycleOwner, {
-            list -> adapter!!.listPattern = list
-            adapter!!.listState = MutableList(list.size){true}
-            adapter!!.notifyDataSetChanged()
+            list ->updateAdapter(list, viewModel.listGameProgressLiveData.value?: emptyList())
+
         })
 
         viewModel.listGameProgressLiveData.observe(viewLifecycleOwner, {
-            list -> adapter!!.listProgress = list
-            adapter!!.notifyDataSetChanged()
+            list -> updateAdapter(viewModel.listPatternLiveData.value?: emptyList(), list)
         })
 
         prepareSwipedItem()
@@ -102,5 +104,35 @@ class PatternMenu : Fragment() {
         itemTouchHelper.attachToRecyclerView(patternViewBinding.rv)
     }
 
+    private fun getPatternByCategory(category: String, listPattern: List<PatternData>): List<PatternData> {
+        return when (category){
+            "Cartoon" -> listPattern.filter { it.Category.equals("Cartoon") }
+            "Flowers" -> listPattern.filter { it.Category.equals("Flowers") }
+            "Animals" -> listPattern.filter { it.Category.equals("Animals") }
+            else -> listPattern
+        }
+    }
+
+    private fun updateAdapter(allPaterns: List<PatternData>, allProgress: List<GameProgress>){
+        var listPattern = getPatternByCategory(category!!, allPaterns)
+
+        var patternIds = listPattern.map { it.id }
+        val listProgress = allProgress.filter { it.patternId in patternIds }
+
+        adapter?.apply {
+            this.listPattern = listPattern
+            this.listProgress = listProgress
+            this.listState = MutableList(listPattern.size){true}
+            notifyDataSetChanged()
+        }
+    }
+
+    companion object {
+        fun newInstance(category: String) = PatternMenu().apply {
+            arguments = Bundle().apply {
+                putString("category", category)
+            }
+        }
+    }
 
 }
