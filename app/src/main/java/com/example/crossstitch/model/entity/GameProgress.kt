@@ -18,7 +18,7 @@ import androidx.room.PrimaryKey
 
 
 )
-class GameProgress(
+data class GameProgress(
     @PrimaryKey(autoGenerate = true)
     var id:Int = 0,
     var patternId:Int,

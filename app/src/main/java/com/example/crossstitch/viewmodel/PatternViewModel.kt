@@ -104,7 +104,7 @@ class PatternViewModel(private val patternRepository: PatternRepository, private
         patternRepository.deleteAll()
     }
 
-    fun deleteOne(id: Int) = viewModelScope.launch {
+    fun deleteOnePattern(id: Int) = viewModelScope.launch {
         patternRepository.deletePattern(patternRepository.findOne(id))
     }
 

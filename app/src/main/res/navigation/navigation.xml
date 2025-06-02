@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/menuPatternContainer">
+    app:startDestination="@id/homePage">
 
     <!-- Thay thế: menuPatternContainer là start destination -->
     <fragment
@@ -61,5 +61,17 @@
         <action
             android:id="@+id/action_createOwnPattern_to_ownPatternMenu"
             app:destination="@id/ownPatternMenu" />
+    </fragment>
+    <fragment
+        android:id="@+id/homePage"
+        android:name="com.example.crossstitch.ui.screen.HomePage"
+        android:label="fragment_home_page"
+        tools:layout="@layout/fragment_home_page" >
+        <action
+            android:id="@+id/action_homePage_to_menuPatternContainer"
+            app:destination="@id/menuPatternContainer" />
+        <action
+            android:id="@+id/action_homePage_to_createOwnPattern"
+            app:destination="@id/createOwnPattern" />
     </fragment>
 </navigation>
