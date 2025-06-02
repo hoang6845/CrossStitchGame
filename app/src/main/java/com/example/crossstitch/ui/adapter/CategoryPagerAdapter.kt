@@ -20,6 +20,4 @@ class CategoryPagerAdapter(
         var category = categories[position]
         return PatternMenu.newInstance(category)
     }
-
-
 }

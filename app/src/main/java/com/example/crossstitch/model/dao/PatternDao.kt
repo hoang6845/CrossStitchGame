@@ -16,7 +16,7 @@ interface PatternDao {
     @Query("select * from Pattern where id = :id")
     suspend fun find(id:Int): PatternData
 
-    @Query("select DISTINCT Category from Pattern where authorName is null")
+    @Query("select DISTINCT Category from Pattern where authorName is null and Category is not null")
     suspend fun findAllCategory():List<String>
 
     @Insert

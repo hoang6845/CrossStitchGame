@@ -36,7 +36,7 @@ class PatternViewModel(private val patternRepository: PatternRepository, private
     val listGameProgress = _listProgress.asStateFlow()
     var listGameProgressLiveData = listGameProgress.asLiveData()
 
-    private val _categories = MutableLiveData<MutableList<String>>(mutableListOf("All"))
+    private val _categories = MutableLiveData<MutableList<String>>()
     val categories:LiveData<MutableList<String>> get() =  _categories
 
     fun setCategories(categories: List<String>){

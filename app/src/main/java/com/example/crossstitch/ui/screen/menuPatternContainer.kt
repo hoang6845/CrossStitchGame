@@ -1,6 +1,7 @@
 package com.example.crossstitch.ui.screen
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -42,7 +43,6 @@ class menuPatternContainer : Fragment() {
             val categories = (viewModel.findAllCategory())
             withContext(Dispatchers.Main){
                 var currentList = mutableListOf("All") + categories
-//                currentList.addAll(categories)
                 viewModel.setCategories(currentList)
                 adapter = CategoryPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle, viewModel.categories.value)
                 menuBinding.viewPager.adapter = adapter

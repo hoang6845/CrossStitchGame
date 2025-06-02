@@ -46,7 +46,6 @@ class PatternMenu : Fragment() {
         super.onCreate(savedInstanceState)
         category = arguments?.getString("category")
         collectionType = arguments?.getString("collectionType")
-        Log.d("Check PatternMenu", "onCreate: category: ${category} collectionType: ${collectionType}")
     }
 
     override fun onCreateView(

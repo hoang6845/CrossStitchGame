@@ -54,6 +54,22 @@ class MainActivity : AppCompatActivity() {
         val factory = PatternViewModel.providerFactory(PatternRepository.getInstance(applicationContext), GameProgressRepository.getInstance(applicationContext))
         patternViewModel = ViewModelProvider(this, factory).get(PatternViewModel::class.java)
 
+//        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.img)
+//        val converterP = ConverterPixel()
+//        val converter = Converter()
+//        val grid = converterP.generatePatternFromBitmap(bitmap, resources.getInteger(R.integer.max_rows), resources.getInteger(R.integer.max_columns))
+//        val palette = converterP.KMeansColor(grid, 24)
+//        CoroutineScope (Dispatchers.IO).launch {
+//            var idCreated = patternViewModel.addPattern(PatternData(id = null, name = "Test", collorPalette = palette!!, gridColor = converterP.quantizeColors(grid, 24, palette), image = converter.bitmapToByteArray(converterP.colorMatrixToBitmap(grid)))).await()
+//            patternViewModel.addProgress(
+//                GameProgress(
+//                id = 0, patternId = idCreated!!.toInt(),
+//                myCrossStitchGrid =  Array(resources.getInteger(R.integer.max_rows)) { IntArray(resources.getInteger(R.integer.max_columns)) { Int.MIN_VALUE } },
+//                completedCells = 0,
+//                mistake = 0
+//            )
+//            )
+//        }
 
         imageViewModel = ViewModelProvider(this).get(ImageViewModel::class.java)
 
