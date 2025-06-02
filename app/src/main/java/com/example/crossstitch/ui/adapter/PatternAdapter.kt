@@ -62,8 +62,7 @@ class PatternAdapter(var Irv:IPatternRv, var listPattern: List<PatternData>,var 
                 "Reset",
                 "Are you sure you want to reset this pattern?",
                 onConfirmed = {
-                    // Gọi hàm xử lý reset ở đây
-                    Toast.makeText(it.context, "Reset confirmed", Toast.LENGTH_SHORT).show()
+                    Irv.onResetClicked(viewHolder.adapterPosition)
                 }
             )
         }
@@ -74,8 +73,7 @@ class PatternAdapter(var Irv:IPatternRv, var listPattern: List<PatternData>,var 
                 "Fill",
                 "Are you sure you want to auto-fill the pattern?",
                 onConfirmed = {
-                    // Gọi hàm xử lý fill ở đây
-                    Toast.makeText(it.context, "Fill confirmed", Toast.LENGTH_SHORT).show()
+                    Irv.onAutoFillClicked(viewHolder.adapterPosition)
                 }
             )
         }

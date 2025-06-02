@@ -1,22 +1,44 @@
 package com.example.crossstitch.ui.screen
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.crossstitch.R
+import com.example.crossstitch.converter.ConverterPixel
 import com.example.crossstitch.databinding.FragmentHomePageBinding
+import com.example.crossstitch.viewmodel.ImageViewModel
 
 private lateinit var homeBinding: FragmentHomePageBinding
 class HomePage : Fragment() {
     private var navController: NavController? = null
+    private var imageViewModel: ImageViewModel? = null
+    private val pickImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        uri?.let {
+            val inputStream = requireContext().contentResolver.openInputStream(uri)
+            val bitmap = BitmapFactory.decodeStream(inputStream)
+            inputStream?.close()
+
+            imageViewModel?.setBitmap(bitmap)
+            val converter = ConverterPixel()
+            val grid = converter.generatePatternFromBitmap(bitmap, resources.getInteger(R.integer.max_rows), resources.getInteger(R.integer.max_columns))
+            val palette = converter.KMeansColor(grid, 24)
+            imageViewModel?.setPalette(palette)
+            imageViewModel?.setGrid(converter.quantizeColors(grid, 24, palette))
+
+            navController?.navigate(R.id.createOwnPattern)
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         navController = findNavController()
-
+        imageViewModel = ViewModelProvider(requireActivity()).get(ImageViewModel::class.java)
     }
 
     override fun onCreateView(
@@ -28,10 +50,10 @@ class HomePage : Fragment() {
             navController?.navigate(R.id.menuPatternContainer)
         }
         homeBinding.btnCreate.setOnClickListener {
-            navController?.navigate(R.id.createOwnPattern)
+            pickImageLauncher.launch("image/*")
         }
         homeBinding.btnInProgress.setOnClickListener {
-
+            navController?.navigate(R.id.menuPatternCollectionContainer)
         }
         return homeBinding.root
     }

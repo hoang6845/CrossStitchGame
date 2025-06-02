@@ -30,7 +30,7 @@
         android:id="@+id/btnInProgress"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:text="My Progress"
+        android:text="Stitching Collection"
         android:textAllCaps="false"
         android:textColor="@android:color/black"
         app:icon="@drawable/in_progress"

@@ -1,5 +1,6 @@
 package com.example.crossstitch.ui.screen
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -16,13 +17,20 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.savedstate.SavedState
 import com.example.crossstitch.R
+import com.example.crossstitch.converter.Converter
+import com.example.crossstitch.converter.ConverterPixel
 import com.example.crossstitch.databinding.ActivityMainBinding
 import com.example.crossstitch.di.Constants
 import com.example.crossstitch.di.ScreenSize
+import com.example.crossstitch.model.entity.GameProgress
+import com.example.crossstitch.model.entity.PatternData
 import com.example.crossstitch.repository.GameProgressRepository
 import com.example.crossstitch.repository.PatternRepository
 import com.example.crossstitch.viewmodel.ImageViewModel
 import com.example.crossstitch.viewmodel.PatternViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 lateinit var mainBinding: ActivityMainBinding
 class MainActivity : AppCompatActivity() {
@@ -45,6 +53,7 @@ class MainActivity : AppCompatActivity() {
 
         val factory = PatternViewModel.providerFactory(PatternRepository.getInstance(applicationContext), GameProgressRepository.getInstance(applicationContext))
         patternViewModel = ViewModelProvider(this, factory).get(PatternViewModel::class.java)
+
 
         imageViewModel = ViewModelProvider(this).get(ImageViewModel::class.java)
 

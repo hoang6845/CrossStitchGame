@@ -22,6 +22,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import android.Manifest
+import android.util.Log
 import com.example.crossstitch.R
 import com.example.crossstitch.databinding.FragmentPatternMenuBinding
 import com.example.crossstitch.model.entity.GameProgress
@@ -40,9 +41,12 @@ class PatternMenu : Fragment() {
     private var bitmapToSave: Bitmap? = null
     private lateinit var viewModel: PatternViewModel
     private var category:String? = null
+    private var collectionType:String? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         category = arguments?.getString("category")
+        collectionType = arguments?.getString("collectionType")
+        Log.d("Check PatternMenu", "onCreate: category: ${category} collectionType: ${collectionType}")
     }
 
     override fun onCreateView(
@@ -58,16 +62,19 @@ class PatternMenu : Fragment() {
 
         adapter = PatternAdapter(object : IPatternRv{
             override fun onResetClicked(position: Int) {
-                this@PatternMenu.adapter?.listProgress?.get(position)?.copy(myCrossStitchGrid = Array(resources.getInteger(R.integer.max_rows)){ IntArray(resources.getInteger(R.integer.max_columns)){Int.MIN_VALUE}})
+                this@PatternMenu.adapter?.listProgress?.get(position)?.copy(myCrossStitchGrid = Array(resources.getInteger(R.integer.max_rows)){ IntArray(resources.getInteger(R.integer.max_columns)){Int.MIN_VALUE}}, completedCells = 0)
                     ?.let { viewModel.updateProgress(it) }
+                this@PatternMenu.adapter?.notifyItemChanged(position)
+
             }
 
             override fun onAutoFillClicked(position: Int) {
                 var resultGrid = this@PatternMenu.adapter?.listPattern?.get(position)?.gridColor
                 if (resultGrid != null) {
-                    this@PatternMenu.adapter?.listProgress?.get(position)?.copy(myCrossStitchGrid = resultGrid)
+                    this@PatternMenu.adapter?.listProgress?.get(position)?.copy(myCrossStitchGrid = resultGrid, completedCells = 18000)
                         ?.let { viewModel.updateProgress(it) }
                 }
+                this@PatternMenu.adapter?.notifyItemChanged(position)
             }
 
             override fun onDownloadClicked(bitmap: Bitmap) {
@@ -92,14 +99,25 @@ class PatternMenu : Fragment() {
             false
         )
 
-        viewModel.listPatternLiveData.observe(viewLifecycleOwner, {
-            list ->updateAdapter(list, viewModel.listGameProgressLiveData.value?: emptyList())
+        if (category!=null){
+            viewModel.listPatternLiveData.observe(viewLifecycleOwner, {
+                    list ->updateAdapter(list, viewModel.listGameProgressLiveData.value?: emptyList())
 
-        })
+            })
 
-        viewModel.listGameProgressLiveData.observe(viewLifecycleOwner, {
-            list -> updateAdapter(viewModel.listPatternLiveData.value?: emptyList(), list)
-        })
+            viewModel.listGameProgressLiveData.observe(viewLifecycleOwner, {
+                    list -> updateAdapter(viewModel.listPatternLiveData.value?: emptyList(), list)
+            })
+        }else if (collectionType!=null){
+            viewModel.listPatternLiveData.observe(viewLifecycleOwner, {
+                    list ->updateAdapterByCollection(list, viewModel.listGameProgressLiveData.value?: emptyList())
+
+            })
+
+            viewModel.listGameProgressLiveData.observe(viewLifecycleOwner, {
+                    list -> updateAdapterByCollection(viewModel.listPatternLiveData.value?: emptyList(), list)
+            })
+        }
 
         prepareSwipedItem()
 
@@ -135,7 +153,30 @@ class PatternMenu : Fragment() {
             "Cartoon" -> listPattern.filter { it.Category.equals("Cartoon") }
             "Flowers" -> listPattern.filter { it.Category.equals("Flowers") }
             "Animals" -> listPattern.filter { it.Category.equals("Animals") }
-            else -> listPattern
+            "All" -> listPattern.filter { it.Category != null }
+            else -> emptyList()
+        }
+    }
+
+    private fun getProgressByCollection(collectionType: String, listProgress: List<GameProgress>): List<GameProgress> {
+        return when (collectionType){
+            "In progress" -> listProgress.filter {(it.completedCells in 0..18000-1 && it.mistake>0)|| it.completedCells in 1..18000-1}
+            "Completed" -> listProgress.filter {it.completedCells == 18000}
+            else -> emptyList()
+        }
+    }
+
+    private fun updateAdapterByCollection(allPaterns: List<PatternData>, allProgress: List<GameProgress>){
+        var listProgress = getProgressByCollection(collectionType!!, allProgress)
+
+        var patternId = listProgress.map { it.patternId }
+        val listPattern = allPaterns.filter { it.id in patternId }
+
+        adapter?.apply {
+            this.listPattern = listPattern
+            this.listProgress = listProgress
+            this.listState = MutableList(listPattern.size){true}
+            notifyDataSetChanged()
         }
     }
 
@@ -150,14 +191,6 @@ class PatternMenu : Fragment() {
             this.listProgress = listProgress
             this.listState = MutableList(listPattern.size){true}
             notifyDataSetChanged()
-        }
-    }
-
-    companion object {
-        fun newInstance(category: String) = PatternMenu().apply {
-            arguments = Bundle().apply {
-                putString("category", category)
-            }
         }
     }
 
@@ -191,24 +224,19 @@ class PatternMenu : Fragment() {
         }
     }
 
-    private fun showConfirmationDialog(
-        context: android.content.Context,
-        title: String,
-        message: String,
-        onConfirmed: () -> Unit
-    ) {
-        val builder = androidx.appcompat.app.AlertDialog.Builder(context)
-        builder.setTitle(title)
-            .setMessage(message)
-            .setPositiveButton("Yes") { dialog, _ ->
-                onConfirmed()
-                dialog.dismiss()
+    companion object {
+        fun newInstance(category: String) = PatternMenu().apply {
+            arguments = Bundle().apply {
+                putString("category", category)
             }
-            .setNegativeButton("Cancel") { dialog, _ ->
-                dialog.dismiss()
+        }
+
+        fun newInstanceForCollection(collectionType:String) = PatternMenu().apply {
+            arguments = Bundle().apply {
+                putString("collectionType", collectionType)
             }
-            .create()
-            .show()
+        }
     }
+
 
 }

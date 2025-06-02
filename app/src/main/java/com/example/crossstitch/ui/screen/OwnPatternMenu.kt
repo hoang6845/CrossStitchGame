@@ -72,16 +72,19 @@ class OwnPatternMenu : Fragment() {
         imageViewModel = ViewModelProvider(requireActivity()).get(ImageViewModel::class.java)
         adapter = PatternAdapter(object : IPatternRv {
             override fun onResetClicked(position: Int) {
-                this@OwnPatternMenu.adapter?.listProgress?.get(position)?.copy(myCrossStitchGrid = Array(resources.getInteger(R.integer.max_rows)){ IntArray(resources.getInteger(R.integer.max_columns)){Int.MIN_VALUE}})
+                this@OwnPatternMenu.adapter?.listProgress?.get(position)?.copy(myCrossStitchGrid = Array(resources.getInteger(R.integer.max_rows)){ IntArray(resources.getInteger(R.integer.max_columns)){Int.MIN_VALUE}}, completedCells = 0)
                     ?.let { viewModel.updateProgress(it) }
+                this@OwnPatternMenu.adapter?.notifyItemChanged(position)
             }
 
             override fun onAutoFillClicked(position: Int) {
                 var resultGrid = this@OwnPatternMenu.adapter?.listPattern?.get(position)?.gridColor
                 if (resultGrid != null) {
-                    this@OwnPatternMenu.adapter?.listProgress?.get(position)?.copy(myCrossStitchGrid = resultGrid)
+                    this@OwnPatternMenu.adapter?.listProgress?.get(position)?.copy(myCrossStitchGrid = resultGrid, completedCells = 18000)
                         ?.let { viewModel.updateProgress(it) }
                 }
+                this@OwnPatternMenu.adapter?.notifyItemChanged(position)
+
             }
 
             override fun onDownloadClicked(bitmap: Bitmap) {
@@ -120,7 +123,6 @@ class OwnPatternMenu : Fragment() {
         prepareHandle()
 
         ownPatternBinding.AddImage.setOnClickListener(handleAddImage)
-        // Inflate the layout for this fragment
         return ownPatternBinding.root
     }
 

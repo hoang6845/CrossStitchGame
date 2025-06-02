@@ -6,20 +6,17 @@ import androidx.lifecycle.Lifecycle
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.example.crossstitch.ui.screen.PatternMenu
 
-class CategoryPagerAdapter(
+class CollectionPagerAdapter(
     fragmentManager: FragmentManager,
     lifecycle: Lifecycle,
-    var categories:List<String>
-
-) : FragmentStateAdapter(fragmentManager, lifecycle) {
-    override fun getItemCount(): Int {
-        return categories.size
-    }
-
+    private val collectionType: List<String>
+) :FragmentStateAdapter(fragmentManager, lifecycle){
     override fun createFragment(position: Int): Fragment {
-        var category = categories[position]
-        return PatternMenu.newInstance(category)
+        var currentCollection = collectionType[position]
+        return PatternMenu.newInstanceForCollection(currentCollection)
     }
 
-
+    override fun getItemCount(): Int {
+        return collectionType.size
+    }
 }
