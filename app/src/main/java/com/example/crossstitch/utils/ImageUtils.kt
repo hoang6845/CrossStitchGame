@@ -1,4 +1,4 @@
-package com.example.crossstitch.untils
+package com.example.crossstitch.utils
 
 import android.content.ContentValues
 import android.content.Context

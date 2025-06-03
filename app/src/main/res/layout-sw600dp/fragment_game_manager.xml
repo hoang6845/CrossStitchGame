@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,178 +9,183 @@
 
     <!-- TODO: Update blank fragment layout -->
 
-    <FrameLayout
-        android:id="@+id/MainBoardGame"
-        android:layout_width="500dp"
-        android:layout_height="match_parent"></FrameLayout>
-
-
     <LinearLayout
-        android:id="@+id/setting"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:layout_height="match_parent">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        >
+        <FrameLayout
+            android:id="@+id/MainBoardGame"
+            android:layout_width="500dp"
+            android:layout_height="match_parent"></FrameLayout>
+
 
         <LinearLayout
-            android:id="@+id/behind"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            >
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/custom_stroke_progress"
-                >
-                <ProgressBar
-                    android:id="@+id/progress_bar"
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:layout_margin="8dp"
-                    android:max="@integer/max_cells"
-                    android:progressDrawable="@drawable/custom_progress_bg"
-                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                    ></ProgressBar>
-
-            </FrameLayout>
-
-            <TextView
-                android:layout_marginTop="7dp"
-                android:id="@+id/completedCells"
-                android:layout_width="match_parent"
-                android:layout_height="62dp"
-                android:textSize="22dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="8dp"
-                android:gravity="center"
-                android:text="Completed: 50%"
-                ></TextView>
-
-            <TextView
-                android:id="@+id/mistake"
-                android:layout_marginTop="7dp"
-                android:layout_width="match_parent"
-                android:layout_height="62dp"
-                android:textSize="22dp"
-                android:paddingTop="4dp"
-                android:paddingBottom="8dp"
-                android:gravity="center"
-                android:text="Mistake: "
-                ></TextView>
-
-            <TextView
-                android:id="@+id/name1"
-                android:layout_width="match_parent"
-                android:layout_height="62dp"
-                android:textSize="22dp"
-                android:background="#dfdfdf"
-                android:paddingTop="4dp"
-                android:paddingBottom="8dp"
-                android:gravity="center"
-                android:text="name"
-                ></TextView>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            >
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_weight="1">
-                <ImageButton
-                    android:id="@+id/btn_home"
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/arrow_back_24px">
-                </ImageButton>
-                <ImageButton
-                    android:id="@+id/btn_save"
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/save_24px">
-                </ImageButton>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_gravity="right">
-                <ImageButton
-                    android:id="@+id/btn_eraser"
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ink_eraser_24px">
-                </ImageButton>
-                <ImageButton
-                    android:id="@+id/btn_aim"
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/motion_sensor_active_24px">
-                </ImageButton>
-
-                <ImageButton
-                    android:id="@+id/btn_fullscreen"
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/fullscreen_24px">
-                </ImageButton>
-
-                <ImageButton
-                    android:id="@+id/btn_cache"
-                    android:layout_width="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/dropdown_24px">
-                </ImageButton>
-            </LinearLayout>
-
-
-
-        </LinearLayout>
-
-        <GridLayout
-            android:id="@+id/gridlayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:numColumns="auto_fit"
+            android:id="@+id/setting"
+            android:layout_width="0dp"
             android:layout_weight="1"
-            ></GridLayout>
+            android:orientation="vertical"
+            android:layout_height="match_parent">
 
+            <LinearLayout
+                android:id="@+id/behind"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/custom_stroke_progress"
+                    >
+                    <ProgressBar
+                        android:id="@+id/progress_bar"
+                        android:layout_width="match_parent"
+                        android:layout_height="60dp"
+                        android:layout_margin="8dp"
+                        android:max="@integer/max_cells"
+                        android:progressDrawable="@drawable/custom_progress_bg"
+                        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                        ></ProgressBar>
+
+                </FrameLayout>
+
+                <TextView
+                    android:layout_marginTop="7dp"
+                    android:id="@+id/completedCells"
+                    android:layout_width="match_parent"
+                    android:layout_height="62dp"
+                    android:textSize="22dp"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="8dp"
+                    android:gravity="center"
+                    android:text="Completed: 50%"
+                    ></TextView>
+
+                <TextView
+                    android:id="@+id/mistake"
+                    android:layout_marginTop="7dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="62dp"
+                    android:textSize="22dp"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="8dp"
+                    android:gravity="center"
+                    android:text="Mistake: "
+                    ></TextView>
+
+                <TextView
+                    android:id="@+id/name1"
+                    android:layout_width="match_parent"
+                    android:layout_height="62dp"
+                    android:textSize="22dp"
+                    android:background="#dfdfdf"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="8dp"
+                    android:gravity="center"
+                    android:text="name"
+                    ></TextView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="1">
+                    <ImageButton
+                        android:id="@+id/btn_home"
+                        android:layout_width="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/arrow_back_24px">
+                    </ImageButton>
+                    <ImageButton
+                        android:id="@+id/btn_save"
+                        android:layout_width="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/save_24px">
+                    </ImageButton>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_gravity="right">
+                    <ImageButton
+                        android:id="@+id/btn_eraser"
+                        android:layout_width="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ink_eraser_24px">
+                    </ImageButton>
+                    <ImageButton
+                        android:id="@+id/btn_aim"
+                        android:layout_width="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/motion_sensor_active_24px">
+                    </ImageButton>
+
+                    <ImageButton
+                        android:id="@+id/btn_fullscreen"
+                        android:layout_width="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/fullscreen_24px">
+                    </ImageButton>
+
+                    <ImageButton
+                        android:id="@+id/btn_cache"
+                        android:layout_width="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/dropdown_24px">
+                    </ImageButton>
+                </LinearLayout>
+
+
+
+            </LinearLayout>
+
+            <GridLayout
+                android:id="@+id/gridlayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:numColumns="auto_fit"
+                android:layout_weight="1"
+                ></GridLayout>
+
+        </LinearLayout>
     </LinearLayout>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/boxstate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="12dp"
+        android:elevation="20dp"
         android:visibility="gone"
         app:cardCornerRadius="24dp"
-        android:elevation="20dp"
-        >
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
         <ImageView
-            android:paddingTop="16dp"
-            android:paddingBottom="16dp"
+            android:id="@+id/currentState"
             android:layout_width="172dp"
             android:layout_height="200dp"
-            android:id="@+id/currentState"
-            ></ImageView>
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"></ImageView>
 
     </androidx.cardview.widget.CardView>
 
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,9 +5,6 @@ import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -16,13 +13,11 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import android.Manifest
-import android.util.Log
 import com.example.crossstitch.R
 import com.example.crossstitch.databinding.FragmentPatternMenuBinding
 import com.example.crossstitch.model.entity.GameProgress
@@ -31,7 +26,7 @@ import com.example.crossstitch.repository.GameProgressRepository
 import com.example.crossstitch.repository.PatternRepository
 import com.example.crossstitch.ui.adapter.PatternAdapter
 import com.example.crossstitch.ui.adapter.irv.IPatternRv
-import com.example.crossstitch.untils.saveBitmapToGallery
+import com.example.crossstitch.utils.saveBitmapToGallery
 import com.example.crossstitch.viewmodel.PatternViewModel
 
 lateinit var patternViewBinding: FragmentPatternMenuBinding

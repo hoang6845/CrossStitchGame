@@ -5,7 +5,7 @@ import androidx.room.Room
 import com.example.crossstitch.model.dao.AppDatabase
 import com.example.crossstitch.model.dao.GameProgressDao
 import com.example.crossstitch.model.dao.PatternDao
-import com.example.crossstitch.untils.DBHelper
+import com.example.crossstitch.utils.DBHelper
 
 object AppModule {
 

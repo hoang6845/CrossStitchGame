@@ -30,7 +30,7 @@ import com.example.crossstitch.repository.GameProgressRepository
 import com.example.crossstitch.repository.PatternRepository
 import com.example.crossstitch.ui.adapter.PatternAdapter
 import com.example.crossstitch.ui.adapter.irv.IPatternRv
-import com.example.crossstitch.untils.saveBitmapToGallery
+import com.example.crossstitch.utils.saveBitmapToGallery
 import com.example.crossstitch.viewmodel.ImageViewModel
 import com.example.crossstitch.viewmodel.PatternViewModel
 
