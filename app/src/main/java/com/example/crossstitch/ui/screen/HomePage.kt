@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.crossstitch.R
 import com.example.crossstitch.converter.ConverterPixel
 import com.example.crossstitch.databinding.FragmentHomePageBinding
+import com.example.crossstitch.di.Constants
 import com.example.crossstitch.utils.TakePhotoUtils
 import com.example.crossstitch.viewmodel.ImageViewModel
 
@@ -25,30 +26,6 @@ class HomePage : Fragment() {
     private var navController: NavController? = null
     private var imageViewModel: ImageViewModel? = null
     private lateinit var takePhotoUtils: TakePhotoUtils
-
-    private var photoUri: Uri? = null
-    private val REQUEST_CAMERA_PERMISSION = 100
-    private val pickImageLauncher =
-        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            uri?.let {
-                val inputStream = requireContext().contentResolver.openInputStream(uri)
-                val bitmap = BitmapFactory.decodeStream(inputStream)
-                inputStream?.close()
-
-                imageViewModel?.setBitmap(bitmap)
-                val converter = ConverterPixel()
-                val grid = converter.generatePatternFromBitmap(
-                    bitmap,
-                    resources.getInteger(R.integer.max_rows),
-                    resources.getInteger(R.integer.max_columns)
-                )
-                val palette = converter.KMeansColor(grid, 24)
-                imageViewModel?.setPalette(palette)
-                imageViewModel?.setGrid(converter.quantizeColors(grid, 24, palette))
-
-                navController?.navigate(R.id.createOwnPattern)
-            }
-        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,11 +39,12 @@ class HomePage : Fragment() {
                 val converter = ConverterPixel()
                 val grid = converter.generatePatternFromBitmap(
                     bitmap,
-                    150,
-                    120)
+                    Constants.NUMROWS,
+                    Constants.NUMCOLS)
                 val palette = converter.KMeansColor(grid, 24)
                 imageViewModel?.setPalette(palette)
                 imageViewModel?.setGrid(converter.quantizeColors(grid, 24, palette))
+
                 navController?.navigate(R.id.createOwnPattern)
             },
             onError = { errorMessage: String ->

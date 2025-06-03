@@ -13,6 +13,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import com.example.crossstitch.di.Constants
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -24,7 +25,6 @@ class TakePhotoUtils(
     private val onError: (errorMessage: String) -> Unit,
 ) {
     private var photoUri: Uri? = null
-    private val REQUEST_CAMERA_PERMISSION = 100
 
 
     private val pickImageLauncher: ActivityResultLauncher<String> =
@@ -37,7 +37,7 @@ class TakePhotoUtils(
             if (success) {
                 photoUri?.let { handleImageUri(it, 2) }
             } else {
-                onError("Chụp ảnh thất bại")
+                onError("Take photo failed")
             }
             photoUri = null
         }
@@ -54,36 +54,34 @@ class TakePhotoUtils(
             if (bitmap != null) {
                 onImagePicked(bitmap)
             } else {
-                onError("Không thể đọc ảnh")
+                onError("Read image failed")
             }
         } catch (e: Exception) {
-            onError("Lỗi khi xử lý ảnh: ${e.message}")
+            onError("Fail: ${e.message}")
         }
     }
 
     fun showImagePickerDialog() {
         AlertDialog.Builder(fragment.requireContext())
-            .setTitle("Chọn ảnh từ")
-            .setItems(arrayOf("Thư viện", "Chụp ảnh")) { dialog, which ->
+            .setTitle("Pick image from")
+            .setItems(arrayOf("Gallery", "Take a picture")) { dialog, which ->
                 when (which) {
                     0 -> pickFromGallery()
-                    1 -> checkCameraPermissionAndCapture()
+                    1 -> captureFromCamera()
                 }
             }
-            .setNegativeButton("Hủy") { dialog, _ ->
+            .setNegativeButton("Cancel") { dialog, _ ->
                 dialog.dismiss()
             }
             .show()
     }
 
-    fun pickFromGallery() {
+    private fun pickFromGallery() {
         pickImageLauncher.launch("image/*")
     }
 
-    /**
-     * Chụp ảnh từ camera
-     */
-    fun captureFromCamera() {
+
+    private fun captureFromCamera() {
         checkCameraPermissionAndCapture()
     }
 
@@ -96,7 +94,7 @@ class TakePhotoUtils(
             ActivityCompat.requestPermissions(
                 fragment.requireActivity(),
                 arrayOf(Manifest.permission.CAMERA),
-                REQUEST_CAMERA_PERMISSION
+                Constants.REQUEST_CAMERA_PERMISSION
             )
         } else {
             handleCapture()
@@ -125,11 +123,11 @@ class TakePhotoUtils(
     }
 
     fun handlePermissionResult(requestCode: Int, grantResults: IntArray) {
-        if (requestCode == REQUEST_CAMERA_PERMISSION) {
+        if (requestCode == Constants.REQUEST_CAMERA_PERMISSION) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 handleCapture()
             } else {
-                onError("Cần cấp quyền camera để chụp ảnh")
+                onError("Need Permission to capture")
             }
         }
     }
