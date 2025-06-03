@@ -34,9 +34,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 lateinit var mainBinding: ActivityMainBinding
+
 class MainActivity : AppCompatActivity() {
     lateinit var patternViewModel: PatternViewModel
-    lateinit var imageViewModel:ImageViewModel
+    lateinit var imageViewModel: ImageViewModel
     var navController: NavController? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,8 +52,10 @@ class MainActivity : AppCompatActivity() {
         }
 
 
-
-        val factory = PatternViewModel.providerFactory(PatternRepository.getInstance(applicationContext), GameProgressRepository.getInstance(applicationContext))
+        val factory = PatternViewModel.providerFactory(
+            PatternRepository.getInstance(applicationContext),
+            GameProgressRepository.getInstance(applicationContext)
+        )
         patternViewModel = ViewModelProvider(this, factory).get(PatternViewModel::class.java)
 
 //        val bitmap = BitmapFactory.decodeResource(resources, R.drawable.img)
@@ -77,16 +80,18 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.fragmentContainer) as NavHostFragment
         navController = navHostFragment.navController
         setSupportActionBar(mainBinding.toolbar)
-        navController!!.addOnDestinationChangedListener(object : NavController.OnDestinationChangedListener{
+        navController!!.addOnDestinationChangedListener(object :
+            NavController.OnDestinationChangedListener {
             override fun onDestinationChanged(
                 controller: NavController,
                 destination: NavDestination,
                 arguments: SavedState?
             ) {
-                when (destination.id){
+                when (destination.id) {
                     R.id.homePage -> {
                         mainBinding.toolbar.visibility = View.GONE
                     }
+
                     else -> {
                         mainBinding.toolbar.visibility = View.VISIBLE
                         updateOnMenu(destination)
@@ -96,15 +101,15 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
-        mainBinding.toolbar.setNavigationOnClickListener{
+        mainBinding.toolbar.setNavigationOnClickListener {
             navController?.navigateUp()
         }
 
         val displayMetrics = resources.displayMetrics
-        ScreenSize.widthDp = displayMetrics.widthPixels/displayMetrics.density
-        ScreenSize.heightDp = displayMetrics.heightPixels/displayMetrics.density
-        if (ScreenSize.widthDp>600){
-            ScreenSize.cellSizeDp = (ScreenSize.heightDp/Constants.NUMROWS)
+        ScreenSize.widthDp = displayMetrics.widthPixels / displayMetrics.density
+        ScreenSize.heightDp = displayMetrics.heightPixels / displayMetrics.density
+        if (ScreenSize.widthDp > 600) {
+            ScreenSize.cellSizeDp = (ScreenSize.heightDp / Constants.NUMROWS)
         }
 
     }
@@ -115,26 +120,41 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return super.onOptionsItemSelected(item)|| navController?.let {
+        return super.onOptionsItemSelected(item) || navController?.let {
             item.onNavDestinationSelected(
                 it
             )
         } == true
     }
 
-    fun updateOnMenu(destination: NavDestination){
-        when(destination.id){
+    fun updateOnMenu(destination: NavDestination) {
+        when (destination.id) {
             R.id.menuPatternContainer -> {
-                mainBinding.toolbar.menu.findItem(R.id.menuPatternContainer).setIcon(R.drawable.interests_24px)
-                mainBinding.toolbar.menu.findItem(R.id.ownPatternMenu).setIcon(R.drawable.photo_library_24px_default)
+                if (mainBinding.toolbar.menu.size()==0) {
+//                    mainBinding.toolbar.menu.clear()
+                    mainBinding.toolbar.inflateMenu(R.menu.menu)
+                }
+                mainBinding.toolbar.menu.findItem(R.id.menuPatternContainer)
+                    .setIcon(R.drawable.interests_24px)
+                mainBinding.toolbar.menu.findItem(R.id.ownPatternMenu)
+                    .setIcon(R.drawable.photo_library_24px_default)
             }
+
             R.id.ownPatternMenu -> {
-                mainBinding.toolbar.menu.findItem(R.id.menuPatternContainer).setIcon(R.drawable.interests_24px_default)
-                mainBinding.toolbar.menu.findItem(R.id.ownPatternMenu).setIcon(R.drawable.photo_library_24px)
+                if (mainBinding.toolbar.menu.size() == 0) {
+                    mainBinding.toolbar.menu.clear()
+                    mainBinding.toolbar.inflateMenu(R.menu.menu)
+                }
+                mainBinding.toolbar.menu.findItem(R.id.menuPatternContainer)
+                    .setIcon(R.drawable.interests_24px_default)
+                mainBinding.toolbar.menu.findItem(R.id.ownPatternMenu)
+                    .setIcon(R.drawable.photo_library_24px)
             }
+
             else -> {
-                mainBinding.toolbar.menu.findItem(R.id.menuPatternContainer).setIcon(R.drawable.interests_24px_default)
-                mainBinding.toolbar.menu.findItem(R.id.ownPatternMenu).setIcon(R.drawable.photo_library_24px_default)
+                mainBinding.toolbar.menu.clear()
+//                mainBinding.toolbar.menu.findItem(R.id.menuPatternContainer).setIcon(R.drawable.interests_24px_default)
+//                mainBinding.toolbar.menu.findItem(R.id.ownPatternMenu).setIcon(R.drawable.photo_library_24px_default)
             }
         }
     }
