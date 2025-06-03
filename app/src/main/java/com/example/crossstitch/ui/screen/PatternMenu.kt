@@ -19,6 +19,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import android.Manifest
 import android.graphics.Canvas
+import android.util.Log
 import com.example.crossstitch.R
 import com.example.crossstitch.base.FlipAnimation
 import com.example.crossstitch.databinding.FragmentPatternMenuBinding
@@ -115,98 +116,9 @@ class PatternMenu : Fragment() {
             })
         }
 
-        prepareSwipedItem()
-
         return patternViewBinding.root
     }
 
-    fun prepareSwipedItem(){
-        var i = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT){
-            override fun onMove(
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean {
-                return false
-            }
-
-            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val position = viewHolder.adapterPosition
-
-                if (direction == ItemTouchHelper.RIGHT) {
-                    val holder = viewHolder as PatternAdapter.PatternHolder
-
-                    if (holder != null) {
-                        // Thiết lập pivot points
-                        setupPivotForSwipe(holder.binding.front, holder.binding.behind)
-
-                        val isFrontVisible = adapter?.listState?.get(position) ?: true
-                        val flipAnimation = FlipAnimation()
-
-                        flipAnimation.flip(
-                            holder.binding.front,
-                            holder.binding.behind,
-                            isFrontVisible
-                        ) {
-                            adapter?.rotate(position)
-                        }
-                    } else {
-                        adapter?.rotate(position)
-                        adapter?.notifyItemChanged(position)
-                    }
-                }
-            }
-
-            // Override clearView để reset vị trí item ngay lập tức
-            override fun clearView(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder) {
-                super.clearView(recyclerView, viewHolder)
-                // Reset vị trí của item về 0 ngay lập tức
-                viewHolder.itemView.translationX = 0f
-                viewHolder.itemView.translationY = 0f
-                viewHolder.itemView.alpha = 1f
-            }
-
-            // Tắt animation mặc định
-            override fun getAnimationDuration(
-                recyclerView: RecyclerView,
-                animationType: Int,
-                animateDx: Float,
-                animateDy: Float
-            ): Long {
-                return 0
-            }
-
-            // Giới hạn khoảng cách di chuyển
-            override fun onChildDraw(
-                c: Canvas,
-                recyclerView: RecyclerView,
-                viewHolder: RecyclerView.ViewHolder,
-                dX: Float,
-                dY: Float,
-                actionState: Int,
-                isCurrentlyActive: Boolean
-            ) {
-                // Không cho item di chuyển quá xa
-                val limitedDx = Math.min(Math.abs(dX), 0f) * Math.signum(dX)
-                super.onChildDraw(c, recyclerView, viewHolder, limitedDx, dY, actionState, isCurrentlyActive)
-            }
-        }
-
-        val itemTouchHelper = ItemTouchHelper(i)
-        itemTouchHelper.attachToRecyclerView(patternViewBinding.rv)
-    }
-
-    private fun setupPivotForSwipe(viewFront: View, viewBehind: View) {
-        viewFront.post {
-            viewFront.pivotX = viewFront.width / 2f
-            viewFront.pivotY = viewFront.height / 2f
-        }
-
-        viewBehind.post {
-            viewBehind.pivotX = viewBehind.width / 2f
-            viewBehind.pivotY = viewBehind.height / 2f
-        }
-    }
 
     private fun getPatternByCategory(category: String, listPattern: List<PatternData>): List<PatternData> {
         return when (category){

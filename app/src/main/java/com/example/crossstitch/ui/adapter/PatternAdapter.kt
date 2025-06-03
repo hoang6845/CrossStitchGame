@@ -1,11 +1,11 @@
 package com.example.crossstitch.ui.adapter
 
-import android.icu.text.Transliterator.Position
 import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
@@ -16,7 +16,6 @@ import com.example.crossstitch.databinding.LineItemPatternBinding
 import com.example.crossstitch.model.entity.GameProgress
 import com.example.crossstitch.model.entity.PatternData
 import com.example.crossstitch.ui.adapter.irv.IPatternRv
-import com.google.android.material.snackbar.Snackbar
 
 class PatternAdapter(var Irv:IPatternRv, var listPattern: List<PatternData>,var listProgress: List<GameProgress>, var listState: MutableList<Boolean>) :RecyclerView.Adapter<ViewHolder>() {
 
@@ -37,16 +36,21 @@ class PatternAdapter(var Irv:IPatternRv, var listPattern: List<PatternData>,var 
         var g = listProgress?.get(position)
         var viewHolder: PatternHolder = holder as PatternHolder
 
-        // Thiết lập pivot point cho cả hai view ngay từ đầu
-        setupPivotPoints(viewHolder.binding.front, viewHolder.binding.behind)
+
+//        holder.binding.itemPattern.setOnClickListener {
+//            Irv.onClickItem(viewHolder.adapterPosition)
+//        }
+
+
+        viewHolder.binding.itemPattern.setOnTouchListener { view, motionEvent ->
+            handleTouchListener(motionEvent, viewHolder.adapterPosition, viewHolder, listState[position])
+        }
 
         viewHolder.binding.name.setText(p?.name)
         viewHolder.binding.name1.setText(p?.name)
         var converter = Converter()
         viewHolder.binding.image.setImageBitmap(p?.image?.let { converter.byteArrayToBitmap(it) })
-        viewHolder.binding.itemPattern.setOnClickListener(View.OnClickListener {
-            Irv.onClickItem(viewHolder.adapterPosition)
-        })
+
         viewHolder.binding.progressBar.progress = (g?.completedCells!!)
         viewHolder.binding.btnDownload.tooltipText = when (g.completedCells/180){
             100 -> null
@@ -81,45 +85,17 @@ class PatternAdapter(var Irv:IPatternRv, var listPattern: List<PatternData>,var 
                 }
             )
         }
-
-        val flipAnimation = FlipAnimation()
-
         if (!listState[position]) {
             viewHolder.binding.front.visibility = View.GONE
             viewHolder.binding.behind.visibility = View.VISIBLE
-            holder.binding.front.rotationY = 0f
-            holder.binding.behind.rotationY = 0f
         } else {
             viewHolder.binding.front.visibility = View.VISIBLE
             viewHolder.binding.behind.visibility = View.GONE
-            holder.binding.front.rotationY = 0f
-            holder.binding.behind.rotationY = 0f
         }
 
-        holder.binding.itemPattern.setOnClickListener {
-            val isFrontVisible = listState[position]
-            flipAnimation.flip(
-                holder.binding.front,
-                holder.binding.behind,
-                isFrontVisible
-            ) {
-                // Cập nhật trạng thái sau khi flip xong
-                listState[position] = !isFrontVisible
-            }
-        }
+
     }
 
-    // Thêm phương thức helper để thiết lập pivot points
-    private fun setupPivotPoints(viewFront: View, viewBehind: View) {
-        val setupPivot = { view: View ->
-            view.post {
-                view.pivotX = view.width / 2f
-                view.pivotY = view.height / 2f
-            }
-        }
-        setupPivot(viewFront)
-        setupPivot(viewBehind)
-    }
     fun rotate(position: Int){
         var current = listState.get(position)
         listState[position] = !current
@@ -148,5 +124,33 @@ class PatternAdapter(var Irv:IPatternRv, var listPattern: List<PatternData>,var 
             }
             .create()
             .show()
+    }
+
+    private var touchDownX = 0f
+    private var touchDownY = 0f
+    private fun handleTouchListener(event: MotionEvent, position: Int, viewHolder: PatternHolder, isFrontVisible: Boolean): Boolean{
+        var flip = FlipAnimation()
+        when (event.action){
+            MotionEvent.ACTION_DOWN || MotionEvent -> {
+                Log.d("check handle touch", "handleTouchListener: on Down ")
+                touchDownX = event.x
+                touchDownY = event.y
+                return true
+            }
+            MotionEvent.ACTION_UP -> {
+                Log.d("check handle touch", "handleTouchListener: on Up ")
+
+                val dx = Math.abs(event.x - touchDownX)
+                val dy = Math.abs(event.y - touchDownY)
+                if (dx < 10 && dy < 10){
+                    Irv.onClickItem(position)
+                    return true
+                }else {
+                    flip.flip(viewHolder.itemView, viewHolder.binding.front, viewHolder.binding.behind, isFrontVisible)
+                    return true
+                }
+            }
+        }
+        return true
     }
 }
