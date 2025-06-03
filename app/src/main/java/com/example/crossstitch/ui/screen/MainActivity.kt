@@ -26,6 +26,7 @@ import com.example.crossstitch.model.entity.GameProgress
 import com.example.crossstitch.model.entity.PatternData
 import com.example.crossstitch.repository.GameProgressRepository
 import com.example.crossstitch.repository.PatternRepository
+import com.example.crossstitch.untils.DBHelper
 import com.example.crossstitch.viewmodel.ImageViewModel
 import com.example.crossstitch.viewmodel.PatternViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -70,7 +71,6 @@ class MainActivity : AppCompatActivity() {
 //            )
 //            )
 //        }
-
         imageViewModel = ViewModelProvider(this).get(ImageViewModel::class.java)
 
         val navHostFragment = supportFragmentManager
