@@ -45,6 +45,7 @@ class GameManager : Fragment() {
     private var handleReset:View.OnClickListener? = null
     private var handleVerify: View.OnClickListener? = null
 
+
     private var currentPattern: PatternData? = null
     private var currentProgress: GameProgress? = null
 
@@ -285,7 +286,7 @@ class GameManager : Fragment() {
                 it.background = selectedDrawable
                 selectedCardView = it as CardView?
                 selectedColor = color
-
+                gameBinding.colorSelected?.setBackgroundColor(selectedColor!!)
                 stitchView.setSelectedColor(selectedColor!!)
                 if (stitchView.isEraserMode()){
                     gameBinding.btnEraser.performClick()

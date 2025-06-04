@@ -35,19 +35,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="4dp"
                 android:text="Progress:">
 
             </TextView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/color_selected"
+                android:layout_marginStart="6dp"
+                android:layout_width="24dp"
+                android:layout_gravity="center"
+                android:layout_height="24dp"
+                app:cardCornerRadius="4dp"
+                ></androidx.cardview.widget.CardView>
 
             <TextView
                 android:id="@+id/numCompletedColor"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_marginStart="4dp"
                 android:gravity="center"
-                android:layout_marginStart="16dp"
                 android:layout_gravity="right"
-                android:text="Color:">
+                android:text="16/16">
             </TextView>
 
         </LinearLayout>
