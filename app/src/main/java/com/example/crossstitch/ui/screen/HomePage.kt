@@ -1,14 +1,11 @@
 package com.example.crossstitch.ui.screen
 
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -41,9 +38,9 @@ class HomePage : Fragment() {
                     bitmap,
                     Constants.NUMROWS,
                     Constants.NUMCOLS)
-                val palette = converter.KMeansColor(grid, 24)
+                val palette = converter.KMeansColor(grid, Constants.MAX_COLORS)
                 imageViewModel?.setPalette(palette)
-                imageViewModel?.setGrid(converter.quantizeColors(grid, 24, palette))
+                imageViewModel?.setGrid(converter.quantizeColors(grid, Constants.MAX_COLORS, palette))
 
                 navController?.navigate(R.id.createOwnPattern)
             },

@@ -23,14 +23,6 @@ class ImageViewModel:ViewModel() {
         _palette.value = list
     }
 
-    fun updateGrid(color: Int, row: Int, col: Int) {
-        _grid.value?.let { oldGrid ->
-            val newGrid = oldGrid.map { it.clone() }.toTypedArray()
-            newGrid[row][col] = color
-            _grid.value = newGrid
-        }
-    }
-
     fun setGrid(grid: Array<IntArray>) {
         val newGrid = grid.map { it.clone() }.toTypedArray()
         _grid.value = newGrid

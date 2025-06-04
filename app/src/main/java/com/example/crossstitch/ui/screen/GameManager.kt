@@ -2,7 +2,6 @@ package com.example.crossstitch.ui.screen
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
@@ -14,19 +13,21 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.cardview.widget.CardView
-import androidx.core.view.children
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import com.example.crossstitch.R
+import com.example.crossstitch.converter.ConverterPixel
 import com.example.crossstitch.databinding.FragmentGameManagerBinding
+import com.example.crossstitch.di.Constants
 import com.example.crossstitch.di.ScreenSize
 import com.example.crossstitch.model.entity.GameProgress
 import com.example.crossstitch.model.entity.PatternData
 import com.example.crossstitch.repository.GameProgressRepository
 import com.example.crossstitch.repository.PatternRepository
 import com.example.crossstitch.viewmodel.PatternViewModel
+import com.example.crossstitch.viewmodel.VerifyViewModel
 
 lateinit var gameBinding: FragmentGameManagerBinding
 class GameManager : Fragment() {
@@ -39,10 +40,16 @@ class GameManager : Fragment() {
     private var handleSwitchMode:View.OnClickListener? = null
     private var handleModeEraser:View.OnClickListener? =null
     private var handleBackHome:View.OnClickListener? =null
+    private var handleVerified:View.OnClickListener? = null
+    private var handleAutoFill:View.OnClickListener? = null
+    private var handleReset:View.OnClickListener? = null
+    private var handleVerify: View.OnClickListener? = null
+
 
     private var currentPattern: PatternData? = null
     private var currentProgress: GameProgress? = null
 
+    private lateinit var verifyViewModel: VerifyViewModel
     private lateinit var viewModel : PatternViewModel
     var navController: NavController? = null
 
@@ -54,6 +61,7 @@ class GameManager : Fragment() {
 
         val factory = PatternViewModel.providerFactory(PatternRepository.getInstance(requireContext()), GameProgressRepository.getInstance(requireContext()))
         viewModel = ViewModelProvider(requireActivity(), factory).get(PatternViewModel::class.java)
+        verifyViewModel = ViewModelProvider(requireActivity()).get(VerifyViewModel::class.java)
 
 //        if (arguments?.getString("type").equals("App")){
 //            currentPattern = arguments?.getInt("position")
@@ -69,6 +77,10 @@ class GameManager : Fragment() {
         var patternId = arguments?.getInt("patternId")
         currentPattern =  viewModel.listPatternLiveData.value.find { patternData: PatternData -> patternData.id == patternId }
         currentProgress = viewModel.listGameProgressLiveData.value.find { gameProgress: GameProgress -> gameProgress.patternId == patternId }
+        val index = viewModel.listPatternLiveData.value?.indexOfFirst { it.id == patternId }
+        if (index != null) {
+            verifyViewModel.setPosition(index)
+        }
     }
 
     @SuppressLint("WrongThread")
@@ -96,18 +108,19 @@ class GameManager : Fragment() {
         gameBinding.btnHome.setOnClickListener(handleBackHome)
         gameBinding.btnAim.background = null
         gameBinding.btnAim.setOnClickListener(handleAimCellNotCompleted)
+        gameBinding.btnReset?.background = null
+        gameBinding.btnReset?.setOnClickListener(handleReset)
+        gameBinding.btnFill?.background = null
+        gameBinding.btnFill?.setOnClickListener(handleAutoFill)
+        gameBinding.btnVerified?.background = null
+        gameBinding.btnVerified?.setOnClickListener(handleVerify)
 
         currentPattern?.collorPalette?.let { prepareColor(it) }
 
-        gameBinding.btnSave.background = null
-        gameBinding.btnSave.setOnClickListener(View.OnClickListener {
-            viewModel.updateProgress(stitchView.getProgress())
-        })
-
         viewModel.currentProgress.observe(viewLifecycleOwner, { value ->
             gameBinding.progressBar?.progress = value
-            gameBinding.completedCells?.setText("Completed: ${value/180}%")
-
+            gameBinding.completedCells?.text = "Completed: ${value/180}%"
+            gameBinding.numCompleted?.text = "Progress: ${value}/18000"
         })
 
         viewModel.currentMistake.observe(viewLifecycleOwner, {value ->
@@ -169,6 +182,55 @@ class GameManager : Fragment() {
         handleAimCellNotCompleted = View.OnClickListener {
             stitchView.AimUnCompletedCeils()
         }
+
+        handleVerified = View.OnClickListener {
+
+        }
+
+        handleReset = View.OnClickListener {
+            showConfirmationDialog(requireContext(), "Reset progress?", "Do you want to reset your progress?"){
+                stitchView.reset()
+            }
+        }
+
+        handleAutoFill = View.OnClickListener {
+            showConfirmationDialog(requireContext(), "Auto fill?", "Do you want to auto fill your progress?"){
+                stitchView.autoFill()
+            }
+        }
+
+        handleVerify = View.OnClickListener {
+            viewModel.updateProgress(stitchView.getProgress())
+            if (stitchView.getCompletedCells()!! < Constants.Cells){
+                verifyViewModel.setBitmap(stitchView.getBitMap()!!)
+            }else{
+                var converterP = ConverterPixel()
+                verifyViewModel.setBitmap(converterP.colorMatrixToBitmap(stitchView.getCurrentCross()))
+            }
+
+            verifyViewModel.setCategory(currentPattern?.Category)
+            navController?.navigate(R.id.verify)
+        }
+    }
+
+    private fun showConfirmationDialog(
+        context: android.content.Context,
+        title: String,
+        message: String,
+        onConfirmed: () -> Unit
+    ) {
+        val builder = androidx.appcompat.app.AlertDialog.Builder(context)
+        builder.setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("Yes") { dialog, _ ->
+                onConfirmed()
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .create()
+            .show()
     }
 
     private fun showSaveConfirmationDialog(){
@@ -177,15 +239,15 @@ class GameManager : Fragment() {
             .setMessage("Do you want to save your progress before exiting?")
             .setPositiveButton("Save"){ _,_ ->
                 viewModel.updateProgress(stitchView.getProgress())
-                navController!!.popBackStack()
+                navController!!.navigate(R.id.menuPatternContainer)
             }.setNegativeButton("Don't save"){_,_ ->
-                navController!!.popBackStack()
+                navController!!.navigate(R.id.menuPatternContainer)
             }.setNeutralButton("Cancle"){dialog,_ ->
                 dialog.dismiss()
             }.show()
     }
 
-    fun prepareColor(colorPalette: List<Int>){
+    private fun prepareColor(colorPalette: List<Int>){
         var map = HashMap<Int, String>()
         for (i in gameBinding.gridlayout.childCount - 1 downTo 0) {
             val child = gameBinding.gridlayout.getChildAt(i)
@@ -195,7 +257,7 @@ class GameManager : Fragment() {
         }
         var count = 0
         var listSymbols = resources.getStringArray(R.array.symbol_list)
-        var cardSize = (ScreenSize.getSettingWidthDp()/6-12).dp
+        var cardSize = (ScreenSize.getSettingWidthDp()/8-12).dp
         for (color in colorPalette){
             val cardView = CardView(requireContext()).apply {
                 radius = 16f
@@ -208,7 +270,7 @@ class GameManager : Fragment() {
                 }
                 background = normalDrawable
                 layoutParams = ViewGroup.MarginLayoutParams(cardSize.toInt(), cardSize.toInt()).apply {
-                    setMargins(6f.dp.toInt(), 6f.dp.toInt(), 6f.dp.toInt(), 6f.dp.toInt())
+                    setMargins(6f.dp.toInt(), 2f.dp.toInt(), 6f.dp.toInt(), 2f.dp.toInt())
                 }
 
             }
@@ -230,7 +292,7 @@ class GameManager : Fragment() {
                 it.background = selectedDrawable
                 selectedCardView = it as CardView?
                 selectedColor = color
-
+                gameBinding.colorSelected?.setBackgroundColor(selectedColor!!)
                 stitchView.setSelectedColor(selectedColor!!)
                 if (stitchView.isEraserMode()){
                     gameBinding.btnEraser.performClick()
@@ -240,7 +302,7 @@ class GameManager : Fragment() {
 
             val textView:TextView = TextView(requireContext()).apply {
                 setText(listSymbols.get(count))
-                textSize = 24f
+                textSize = 18f
                 gravity = Gravity.CENTER
             }
             map.put(color, listSymbols.get(count))

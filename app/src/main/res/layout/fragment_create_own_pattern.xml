@@ -59,15 +59,15 @@
             android:layout_width="0dp"
             android:layout_height="40dp"
             android:layout_weight="1"
-            android:max="24"
+            android:max="32"
             android:min="2"
-            android:progress="24" />
+            android:progress="32" />
         <TextView
             android:id="@+id/numcolors"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="24dp"
-            android:text="24"
+            android:text="32"
             android:layout_margin="6dp"
             ></TextView>
 
