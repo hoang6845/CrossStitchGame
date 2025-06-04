@@ -8,7 +8,6 @@ import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import com.example.crossstitch.converter.Converter
-import com.example.crossstitch.converter.ConverterPixel
 import com.example.crossstitch.databinding.LineItemPatternBinding
 import com.example.crossstitch.model.entity.GameProgress
 import com.example.crossstitch.model.entity.PatternData
@@ -25,6 +24,7 @@ class PatternAdapter(var Irv:IPatternRv, var listPattern: List<PatternData>,var 
         return listPattern?.size ?: 0
     }
 
+    // Trong phương thức onBindViewHolder của PatternAdapter
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if (position >= listPattern.size || position >= listProgress.size) return
@@ -38,6 +38,9 @@ class PatternAdapter(var Irv:IPatternRv, var listPattern: List<PatternData>,var 
             Irv.onClickItem(viewHolder.adapterPosition)
         })
     }
+
+
+
 
     inner class PatternHolder(var binding: LineItemPatternBinding):ViewHolder(binding.root){
 
