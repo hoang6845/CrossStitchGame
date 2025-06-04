@@ -59,15 +59,6 @@ class CrossStitchView @JvmOverloads constructor(
 
 
     private fun calNumCompletedPallet(){
-        this.gameProgress.myCrossStitchGrid.forEach { intArray ->
-            intArray.forEach {
-                if (it != Int.MIN_VALUE) {
-                    colorIndexMap!![it]?.let { index ->
-                        numCompletedPallet!!.set(index, numCompletedPallet!![index] +1)
-                    }
-                }
-            }
-        }
 
         this.patternData.gridColor.forEach { intArray ->
             intArray.forEach {
@@ -78,6 +69,21 @@ class CrossStitchView @JvmOverloads constructor(
                 }
             }
         }
+
+
+        this.gameProgress.myCrossStitchGrid.forEach { intArray ->
+            intArray.forEach {
+                if (it != Int.MIN_VALUE) {
+                    colorIndexMap!![it]?.let { index ->
+                        if ( numCompletedPallet!![index]<numColorNeedCompleted!![index]) {
+                            numCompletedPallet!![index] = numCompletedPallet!![index] +1
+                        }
+                    }
+                }
+            }
+        }
+
+
     }
 
     private fun updateNumCompletedPallet(row: Int, col: Int, newColor: Int) {
@@ -329,6 +335,7 @@ class CrossStitchView @JvmOverloads constructor(
                     invalidate()
                 } else {
                     grid[startRow!! + row][startCol!! + col] = selectedColor!!
+                    aimColor = null
                     updateProgress(startRow!! + row, startCol!! + col, selectedColor!!)
                     updateNumCompletedPallet(startRow!! + row, startCol!! + col, selectedColor!!)
                     myCrossStitchGrid[startRow!! + row][startCol!! + col] = selectedColor!!
@@ -453,8 +460,13 @@ class CrossStitchView @JvmOverloads constructor(
 
                 paint.color = grid[startRow!! + row][startCol!! + col]
                 drawRect(canvas, drawCellSize!!, row, col, startRow!! + row, startCol!! + col)
-                paint.strokeWidth = 1f
-                paint.color = Color.GRAY
+                if (aimColor!= null&& aimColor==patternData.gridColor[startRow!! + row][startCol!!+col] && myCrossStitchGrid[startRow!! + row][startCol!!+col] != aimColor){
+                    paint.color = aimColor!!
+                    paint.strokeWidth = 6f
+                }else {
+                    paint.strokeWidth = 1f
+                    paint.color = Color.GRAY
+                }
                 paint.style = Paint.Style.STROKE
 //                drawRect(canvas, , row, col,, ) //ve vien
                 canvas.drawRect(
@@ -462,12 +474,20 @@ class CrossStitchView @JvmOverloads constructor(
                     (col + 1) * drawCellSize!!, (row + 1) * drawCellSize!!,
                     paint
                 )
+                paint.strokeWidth = 1f
                 paint.style = Paint.Style.FILL
 
             }
 
         }
 
+    }
+
+    private fun getInverseColor(color: Int): Int {
+        val r = Color.red(color)
+        val g = Color.green(color)
+        val b = Color.blue(color)
+        return Color.rgb(255 - r, 255 - g, 255 - b)
     }
 
     private fun drawRect(

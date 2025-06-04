@@ -97,5 +97,8 @@
         <action
             android:id="@+id/action_verify_to_menuPatternContainer"
             app:destination="@id/menuPatternContainer" />
+        <action
+            android:id="@+id/action_verify_to_gameManager"
+            app:destination="@id/gameManager" />
     </fragment>
 </navigation>

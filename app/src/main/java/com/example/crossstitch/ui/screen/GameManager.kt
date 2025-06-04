@@ -77,6 +77,10 @@ class GameManager : Fragment() {
         var patternId = arguments?.getInt("patternId")
         currentPattern =  viewModel.listPatternLiveData.value.find { patternData: PatternData -> patternData.id == patternId }
         currentProgress = viewModel.listGameProgressLiveData.value.find { gameProgress: GameProgress -> gameProgress.patternId == patternId }
+        val index = viewModel.listPatternLiveData.value?.indexOfFirst { it.id == patternId }
+        if (index != null) {
+            verifyViewModel.setPosition(index)
+        }
     }
 
     @SuppressLint("WrongThread")
@@ -203,6 +207,8 @@ class GameManager : Fragment() {
                 var converterP = ConverterPixel()
                 verifyViewModel.setBitmap(converterP.colorMatrixToBitmap(stitchView.getCurrentCross()))
             }
+
+            verifyViewModel.setCategory(currentPattern?.Category)
             navController?.navigate(R.id.verify)
         }
     }
@@ -233,15 +239,15 @@ class GameManager : Fragment() {
             .setMessage("Do you want to save your progress before exiting?")
             .setPositiveButton("Save"){ _,_ ->
                 viewModel.updateProgress(stitchView.getProgress())
-                navController!!.popBackStack()
+                navController!!.navigate(R.id.menuPatternContainer)
             }.setNegativeButton("Don't save"){_,_ ->
-                navController!!.popBackStack()
+                navController!!.navigate(R.id.menuPatternContainer)
             }.setNeutralButton("Cancle"){dialog,_ ->
                 dialog.dismiss()
             }.show()
     }
 
-    fun prepareColor(colorPalette: List<Int>){
+    private fun prepareColor(colorPalette: List<Int>){
         var map = HashMap<Int, String>()
         for (i in gameBinding.gridlayout.childCount - 1 downTo 0) {
             val child = gameBinding.gridlayout.getChildAt(i)

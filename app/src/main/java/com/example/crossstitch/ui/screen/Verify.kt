@@ -17,12 +17,21 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
 import com.example.crossstitch.R
 import com.example.crossstitch.converter.Converter
 import com.example.crossstitch.converter.ConverterPixel
 import com.example.crossstitch.databinding.FragmentVerifyBinding
 import com.example.crossstitch.di.Constants
+import com.example.crossstitch.model.entity.GameProgress
+import com.example.crossstitch.model.entity.PatternData
+import com.example.crossstitch.repository.GameProgressRepository
+import com.example.crossstitch.repository.PatternRepository
+import com.example.crossstitch.ui.adapter.PatternAdapter
+import com.example.crossstitch.ui.adapter.irv.IPatternRv
 import com.example.crossstitch.utils.saveBitmapToGallery
+import com.example.crossstitch.viewmodel.PatternViewModel
 import com.example.crossstitch.viewmodel.VerifyViewModel
 import java.io.File
 import java.io.FileOutputStream
@@ -36,9 +45,16 @@ class Verify : Fragment() {
     private var handleShare: View.OnClickListener? = null
     private var navController: NavController? = null
     var bitmap: Bitmap? = null
+
+    private var adapter:PatternAdapter? = null
+    private var patternViewModel: PatternViewModel? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         navController = findNavController()
+
+        val factory = PatternViewModel.providerFactory(PatternRepository.getInstance(requireContext()), GameProgressRepository.getInstance(requireContext()))
+        patternViewModel = ViewModelProvider(requireActivity(), factory).get(PatternViewModel::class.java)
+
     }
 
     override fun onCreateView(
@@ -52,21 +68,73 @@ class Verify : Fragment() {
         prepareHandle()
         verifyMainBinding.btnDownload.background = null
         verifyMainBinding.btnDownload.setOnClickListener(handleSaveImage)
-        verifyMainBinding.btnHome.background = null
-        verifyMainBinding.btnHome.setOnClickListener(handleGoBack)
+//        verifyMainBinding.btnHome.background = null
+//        verifyMainBinding.btnHome.setOnClickListener(handleGoBack)
         verifyMainBinding.btnShare.background = null
         verifyMainBinding.btnShare.setOnClickListener(handleShare)
+
+        adapter = PatternAdapter(object : IPatternRv {
+            override fun onClickItem(position: Int) {
+                val bundle= Bundle()
+                bundle.putInt("patternId", this@Verify.adapter?.listPattern?.get(position)?.id!!)
+                bundle.putString("type", "App")
+                navController!!.navigate(R.id.gameManager, bundle)
+            }
+
+        }, listOf(), listOf(), mutableListOf())
+        verifyMainBinding.rv.adapter = adapter
+        verifyMainBinding.rv.layoutManager = LinearLayoutManager(
+            requireContext(),
+            LinearLayoutManager.HORIZONTAL,
+            false
+        )
+        verifyMainBinding.rv.post{
+            verifyMainBinding.rv.scrollToPosition(verifyViewModel.position.value?:0)
+        }
+        val snapHelper = LinearSnapHelper()
+        snapHelper.attachToRecyclerView(verifyMainBinding.rv)
+
+        patternViewModel?.listPatternLiveData?.observe(viewLifecycleOwner, {list->
+            updateAdapter(list, patternViewModel?.listGameProgressLiveData?.value?: emptyList())
+        })
+
+        patternViewModel?.listGameProgressLiveData?.observe(viewLifecycleOwner, {list ->
+            updateAdapter(patternViewModel?.listPatternLiveData?.value?: emptyList(), list)
+        })
+
         return verifyMainBinding.root
     }
 
-    fun prepareHandle(){
+    private fun getPatternApp(listPattern: List<PatternData>): List<PatternData> {
+        return listPattern.filter { it.Category!=null }
+    }
+
+    private fun updateAdapter(allPaterns: List<PatternData>, allProgress: List<GameProgress>){
+        var listPattern:List<PatternData>? = null
+        if (verifyViewModel.category.value != null){
+            listPattern = getPatternApp(allPaterns)
+        }else{
+            listPattern = allPaterns
+        }
+        val listPatternId = listPattern.map { it.id }
+        val listProgress = allProgress.filter { it.patternId in listPatternId }
+        adapter?.apply {
+            this.listPattern = listPattern
+            this.listProgress = listProgress
+            this.listState = MutableList(listPattern.size){true}
+            notifyDataSetChanged()
+        }
+
+    }
+
+    private fun prepareHandle(){
         handleSaveImage = View.OnClickListener {
             checkStoragePermissionAndSave()
         }
-        handleGoBack = View.OnClickListener {
-            verifyViewModel.clearBitMap()
-            navController?.navigate(R.id.menuPatternContainer)
-        }
+//        handleGoBack = View.OnClickListener {
+//            verifyViewModel.clearBitMap()
+//            navController?.navigate(R.id.menuPatternContainer)
+//        }
         handleShare = View.OnClickListener {
             bitmap?.let { it1 -> shareImageBitmap(it1) }
         }

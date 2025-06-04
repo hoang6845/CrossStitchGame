@@ -16,6 +16,21 @@ class VerifyViewModel: ViewModel() {
     fun clearBitMap(){
         _bitmap.value = null
     }
+
+    private val _category = MutableLiveData<String?>()
+    val category: LiveData<String?> get() = _category
+    fun setCategory(newCategory: String?) {
+        _category.value = newCategory
+    }
+
+    private val _position = MutableLiveData<Int>(0)
+    val position: LiveData<Int> get() = _position
+
+    fun setPosition(value: Int){
+        _position.value = value
+
+    }
+
 //    private var _grid = MutableLiveData<Array<IntArray>>()
 //    val grid: LiveData<Array<IntArray>> get() = _grid
 //    fun setGrid(grid: Array<IntArray>) {

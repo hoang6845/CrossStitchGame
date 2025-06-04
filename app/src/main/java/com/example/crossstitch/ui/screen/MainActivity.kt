@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
                 arguments: SavedState?
             ) {
                 when (destination.id) {
-                    R.id.homePage, R.id.verify -> {
+                    R.id.homePage -> {
                         mainBinding.toolbar.visibility = View.GONE
                     }
 
