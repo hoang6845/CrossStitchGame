@@ -47,8 +47,6 @@ class PatternAdapter(var Irv:IPatternRv, var listPattern: List<PatternData>,var 
     }
 
 
-
-
     inner class PatternHolder(var binding: LineItemPatternBinding):ViewHolder(binding.root){
 
     }
