@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import com.example.crossstitch.base.FlipAnimation
 import com.example.crossstitch.converter.Converter
 import com.example.crossstitch.converter.ConverterPixel
 import com.example.crossstitch.databinding.LineItemPatternBinding
@@ -25,12 +26,17 @@ class PatternAdapter(var Irv:IPatternRv, var listPattern: List<PatternData>,var 
         return listPattern?.size ?: 0
     }
 
+    // Trong phương thức onBindViewHolder của PatternAdapter
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if (position >= listPattern.size || position >= listProgress.size) return
         var p = listPattern?.get(position)
         var g = listProgress?.get(position)
         var viewHolder: PatternHolder = holder as PatternHolder
+
+        // Thiết lập pivot point cho cả hai view ngay từ đầu
+        setupPivotPoints(viewHolder.binding.front, viewHolder.binding.behind)
+
         viewHolder.binding.name.setText(p?.name)
         var converter = Converter()
         viewHolder.binding.image.setImageBitmap(p?.image?.let { converter.byteArrayToBitmap(it) })

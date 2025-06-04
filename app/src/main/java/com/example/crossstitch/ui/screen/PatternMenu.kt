@@ -10,6 +10,7 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.crossstitch.R
+import com.example.crossstitch.base.FlipAnimation
 import com.example.crossstitch.databinding.FragmentPatternMenuBinding
 import com.example.crossstitch.model.entity.GameProgress
 import com.example.crossstitch.model.entity.PatternData
@@ -84,6 +85,19 @@ class PatternMenu : Fragment() {
         return patternViewBinding.root
     }
 
+
+
+    private fun setupPivotForSwipe(viewFront: View, viewBehind: View) {
+        viewFront.post {
+            viewFront.pivotX = viewFront.width / 2f
+            viewFront.pivotY = viewFront.height / 2f
+        }
+
+        viewBehind.post {
+            viewBehind.pivotX = viewBehind.width / 2f
+            viewBehind.pivotY = viewBehind.height / 2f
+        }
+    }
 
     private fun getPatternByCategory(category: String, listPattern: List<PatternData>): List<PatternData> {
         return when (category){
