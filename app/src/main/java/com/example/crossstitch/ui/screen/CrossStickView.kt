@@ -88,14 +88,14 @@ class CrossStitchView @JvmOverloads constructor(
 
     private fun updateNumCompletedPallet(row: Int, col: Int, newColor: Int) {
         if (isEraserMode){
-            var index = colorIndexMap?.get(selectedColor)
+            val index = colorIndexMap?.get(selectedColor)
             if (patternData.gridColor[row][col] == myCrossStitchGrid[row][col]){
                 numCompletedPallet?.set(index!!, numCompletedPallet!![index!!]-1)
 
             }
             setSelectedColor(selectedColor!!)
         }else {
-            var index = colorIndexMap?.get(patternData.gridColor[row][col])
+            val index = colorIndexMap?.get(patternData.gridColor[row][col])
             if (patternData.gridColor[row][col] == myCrossStitchGrid[row][col] && patternData.gridColor[row][col] != newColor) {
                 if (index != null) {
                     numCompletedPallet?.set(index, numCompletedPallet!![index]-1)
@@ -501,7 +501,7 @@ class CrossStitchView @JvmOverloads constructor(
             if (this.patternData.gridColor[checkRow][checkCol] != myCrossStitchGrid[checkRow][checkCol]) {
                 val cellLeft = col * cellSize
                 val cellTop = row * cellSize
-                var paintTemp = Paint().apply {
+                val paintTemp = Paint().apply {
                     textAlign = Paint.Align.CENTER
                     textSize = cellSize * 0.6f
                     isAntiAlias = true
@@ -514,7 +514,7 @@ class CrossStitchView @JvmOverloads constructor(
             val cellLeft = col * cellSize
             val cellTop = row * cellSize
             MapSymbols[this.patternData.gridColor[checkRow][checkCol]]?.let { symbol ->
-                var paintTemp = Paint().apply {
+                val paintTemp = Paint().apply {
                     textAlign = Paint.Align.CENTER
                     textSize = cellSize * 0.8f
                     isAntiAlias = true

@@ -67,6 +67,7 @@ class HomePage : Fragment() {
         return homeBinding.root
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,

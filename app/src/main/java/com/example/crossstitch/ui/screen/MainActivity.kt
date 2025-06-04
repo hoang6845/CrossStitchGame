@@ -13,7 +13,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.onNavDestinationSelected
-import androidx.savedstate.SavedState
 import com.example.crossstitch.R
 import com.example.crossstitch.databinding.ActivityMainBinding
 import com.example.crossstitch.di.Constants
@@ -22,6 +21,7 @@ import com.example.crossstitch.repository.GameProgressRepository
 import com.example.crossstitch.repository.PatternRepository
 import com.example.crossstitch.viewmodel.ImageViewModel
 import com.example.crossstitch.viewmodel.PatternViewModel
+import androidx.core.view.isEmpty
 
 lateinit var mainBinding: ActivityMainBinding
 
@@ -70,38 +70,34 @@ class MainActivity : AppCompatActivity() {
             .findFragmentById(R.id.fragmentContainer) as NavHostFragment
         navController = navHostFragment.navController
         setSupportActionBar(mainBinding.toolbar)
-        navController!!.addOnDestinationChangedListener(object :
-            NavController.OnDestinationChangedListener {
-            override fun onDestinationChanged(
-                controller: NavController,
-                destination: NavDestination,
-                arguments: SavedState?
-            ) {
-                when (destination.id) {
-                    R.id.homePage -> {
-                        mainBinding.toolbar.visibility = View.GONE
-                    }
-
-                    else -> {
-                        mainBinding.toolbar.visibility = View.VISIBLE
-                        updateOnMenu(destination)
-                    }
+        navController!!.addOnDestinationChangedListener { _, destination, arguments ->
+            when (destination.id) {
+                R.id.homePage -> {
+                    mainBinding.toolbar.visibility = View.GONE
                 }
-                updateOnMenu(destination)
+
+                else -> {
+                    mainBinding.toolbar.visibility = View.VISIBLE
+                    updateOnMenu(destination)
+                }
             }
-        })
+            updateOnMenu(destination)
+        }
 
         mainBinding.toolbar.setNavigationOnClickListener {
             navController?.navigate(R.id.homePage)
         }
 
+        initSetSize()
+    }
+
+    private fun initSetSize() {
         val displayMetrics = resources.displayMetrics
         ScreenSize.widthDp = displayMetrics.widthPixels / displayMetrics.density
         ScreenSize.heightDp = displayMetrics.heightPixels / displayMetrics.density
         if (ScreenSize.widthDp > 600) {
             ScreenSize.cellSizeDp = (ScreenSize.heightDp / Constants.NUMROWS)
         }
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -120,7 +116,7 @@ class MainActivity : AppCompatActivity() {
     fun updateOnMenu(destination: NavDestination) {
         when (destination.id) {
             R.id.menuPatternContainer -> {
-                if (mainBinding.toolbar.menu.size()==0) {
+                if (mainBinding.toolbar.menu.isEmpty()) {
 //                    mainBinding.toolbar.menu.clear()
                     mainBinding.toolbar.inflateMenu(R.menu.menu)
                 }
@@ -131,7 +127,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             R.id.ownPatternMenu -> {
-                if (mainBinding.toolbar.menu.size() == 0) {
+                if (mainBinding.toolbar.menu.isEmpty()) {
                     mainBinding.toolbar.menu.clear()
                     mainBinding.toolbar.inflateMenu(R.menu.menu)
                 }

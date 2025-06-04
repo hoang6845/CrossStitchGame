@@ -87,8 +87,8 @@ class CreateOwnPattern : Fragment() {
     }
 
     fun preapareHandle(){
-        var converter=Converter()
-        var converterP = ConverterPixel()
+        val converter=Converter()
+        val converterP = ConverterPixel()
         var idCreated: Long? = null
         handleSave = View.OnClickListener {
 

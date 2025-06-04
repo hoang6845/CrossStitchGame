@@ -90,11 +90,9 @@ class PatternMenu : Fragment() {
 
     private fun getPatternByCategory(category: String, listPattern: List<PatternData>): List<PatternData> {
         return when (category){
-            "Cartoon" -> listPattern.filter { it.Category.equals("Cartoon") }
-            "Flowers" -> listPattern.filter { it.Category.equals("Flowers") }
-            "Animals" -> listPattern.filter { it.Category.equals("Animals") }
             "All" -> listPattern.filter { it.Category != null }
-            else -> emptyList()
+            null -> emptyList()
+            else -> listPattern.filter { it.Category.equals(category) }
         }
     }
 

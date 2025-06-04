@@ -39,15 +39,15 @@ class OwnPatternMenu : Fragment() {
         takePhotoUtils = TakePhotoUtils(
             this,
             onImagePicked = { bitmap: Bitmap ->
-                imageViewModel?.setBitmap(bitmap)
+                imageViewModel.setBitmap(bitmap)
                 val converter = ConverterPixel()
                 val grid = converter.generatePatternFromBitmap(
                     bitmap,
                     Constants.NUMROWS,
                     Constants.NUMCOLS)
                 val palette = converter.KMeansColor(grid, Constants.MAX_COLORS)
-                imageViewModel?.setPalette(palette)
-                imageViewModel?.setGrid(converter.quantizeColors(grid, Constants.MAX_COLORS, palette))
+                imageViewModel.setPalette(palette)
+                imageViewModel.setGrid(converter.quantizeColors(grid, Constants.MAX_COLORS, palette))
                 Log.d("demm", "onCreate: ${palette.size}")
                 navController?.navigate(R.id.createOwnPattern)
             },
@@ -113,7 +113,7 @@ class OwnPatternMenu : Fragment() {
         val allMyPattern = allPattern.filter { patternData: PatternData -> patternData.authorName != null}
 
         val listPatternId: List<Int> = allMyPattern.map { it.id!! }
-        var allMyProgress:List<GameProgress> = allProgress.filter { gameProgress: GameProgress -> gameProgress.patternId in listPatternId }
+        val allMyProgress:List<GameProgress> = allProgress.filter { gameProgress: GameProgress -> gameProgress.patternId in listPatternId }
 
         adapter?.apply {
             this.listPattern = allMyPattern
@@ -123,6 +123,7 @@ class OwnPatternMenu : Fragment() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         takePhotoUtils.handlePermissionResult(requestCode, grantResults)

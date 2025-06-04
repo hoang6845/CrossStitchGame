@@ -12,7 +12,7 @@ class CollectionPagerAdapter(
     private val collectionType: List<String>
 ) :FragmentStateAdapter(fragmentManager, lifecycle){
     override fun createFragment(position: Int): Fragment {
-        var currentCollection = collectionType[position]
+        val currentCollection = collectionType[position]
         return PatternMenu.newInstanceForCollection(currentCollection)
     }
 

@@ -39,12 +39,16 @@ class menuPatternContainer : Fragment() {
         CoroutineScope(Dispatchers.IO).launch {
             val categories = (viewModel.findAllCategory())
             withContext(Dispatchers.Main){
-                var currentList = mutableListOf("All") + categories
+                val currentList = mutableListOf("All") + categories
                 viewModel.setCategories(currentList)
-                adapter = CategoryPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle, viewModel.categories.value)
+                adapter = viewModel.categories.value?.let {
+                    CategoryPagerAdapter(childFragmentManager, viewLifecycleOwner.lifecycle,
+                        it
+                    )
+                }
                 menuBinding.viewPager.adapter = adapter
                 TabLayoutMediator(menuBinding.tabCategory, menuBinding.viewPager) {tab, position ->
-                    tab.text = viewModel.categories.value[position]
+                    tab.text = viewModel.categories.value?.get(position)
                 }.attach()
             }
         }

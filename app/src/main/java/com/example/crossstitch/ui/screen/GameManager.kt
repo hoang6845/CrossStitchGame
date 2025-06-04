@@ -51,7 +51,7 @@ class GameManager : Fragment() {
 
     private lateinit var verifyViewModel: VerifyViewModel
     private lateinit var viewModel : PatternViewModel
-    var navController: NavController? = null
+    private var navController: NavController? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,19 +97,19 @@ class GameManager : Fragment() {
         gameBinding.btnHome.setOnClickListener(handleBackHome)
         gameBinding.btnAim.background = null
         gameBinding.btnAim.setOnClickListener(handleAimCellNotCompleted)
-        gameBinding.btnReset?.background = null
-        gameBinding.btnReset?.setOnClickListener(handleReset)
-        gameBinding.btnFill?.background = null
-        gameBinding.btnFill?.setOnClickListener(handleAutoFill)
-        gameBinding.btnVerified?.background = null
-        gameBinding.btnVerified?.setOnClickListener(handleVerify)
+        gameBinding.btnReset.background = null
+        gameBinding.btnReset.setOnClickListener(handleReset)
+        gameBinding.btnFill.background = null
+        gameBinding.btnFill.setOnClickListener(handleAutoFill)
+        gameBinding.btnVerified.background = null
+        gameBinding.btnVerified.setOnClickListener(handleVerify)
 
         currentPattern?.collorPalette?.let { prepareColor(it) }
 
         viewModel.currentProgress.observe(viewLifecycleOwner, { value ->
             gameBinding.progressBar?.progress = value
-            gameBinding.completedCells?.text = "Completed: ${value/180}%"
-            gameBinding.numCompleted?.text = "Progress: ${value}/18000"
+            gameBinding.completedCells?.text = "Completed: ${value/(Constants.Cells/100)}%"
+            gameBinding.numCompleted?.text = "Progress: ${value}/${Constants.Cells}"
         })
 
         viewModel.currentMistake.observe(viewLifecycleOwner, {value ->
@@ -193,7 +193,7 @@ class GameManager : Fragment() {
             if (stitchView.getCompletedCells()!! < Constants.Cells){
                 verifyViewModel.setBitmap(stitchView.getBitMap()!!)
             }else{
-                var converterP = ConverterPixel()
+                val converterP = ConverterPixel()
                 verifyViewModel.setBitmap(converterP.colorMatrixToBitmap(stitchView.getCurrentCross()))
             }
 
@@ -237,17 +237,16 @@ class GameManager : Fragment() {
     }
 
     private fun prepareColor(colorPalette: List<Int>){
-        var map = HashMap<Int, String>()
+        val map = HashMap<Int, String>()
         for (i in gameBinding.gridlayout.childCount - 1 downTo 0) {
             val child = gameBinding.gridlayout.getChildAt(i)
             if (child is CardView) {
                 gameBinding.gridlayout.removeViewAt(i)
             }
         }
-        var count = 0
-        var listSymbols = resources.getStringArray(R.array.symbol_list)
-        var cardSize = (ScreenSize.getSettingWidthDp()/8-12).dp
-        for (color in colorPalette){
+        val listSymbols = resources.getStringArray(R.array.symbol_list)
+        val cardSize = (ScreenSize.getSettingWidthDp()/8-12).dp
+        for ((count, color) in colorPalette.withIndex()){
             val cardView = CardView(requireContext()).apply {
                 radius = 16f
                 cardElevation = 8f
@@ -271,7 +270,7 @@ class GameManager : Fragment() {
                 }
                 selectedCardView?.background = normalDrawable
 
-                var selectedDrawable = GradientDrawable().apply {
+                val selectedDrawable = GradientDrawable().apply {
                     shape = GradientDrawable.RECTANGLE
                     cornerRadius = 16f
                     setColor(color)
@@ -294,8 +293,7 @@ class GameManager : Fragment() {
                 textSize = 18f
                 gravity = Gravity.CENTER
             }
-            map.put(color, listSymbols.get(count))
-            count++;
+            map[color] = listSymbols.get(count)
             cardView.addView(textView)
             gameBinding.gridlayout.addView(cardView)
 

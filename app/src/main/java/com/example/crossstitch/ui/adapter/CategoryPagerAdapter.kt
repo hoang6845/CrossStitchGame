@@ -17,7 +17,7 @@ class CategoryPagerAdapter(
     }
 
     override fun createFragment(position: Int): Fragment {
-        var category = categories[position]
+        val category = categories[position]
         return PatternMenu.newInstance(category)
     }
 }

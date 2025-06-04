@@ -26,8 +26,8 @@ class MenuPatternCollectionContainer : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        var listCollectionType = mutableListOf("Completed", "In progress")
+    ): View {
+        val listCollectionType = mutableListOf("Completed", "In progress")
         menuPatternCollectionBinding = FragmentMenuPatternCollectionContainerBinding.inflate(layoutInflater, container, false)
         val factory = PatternViewModel.providerFactory(PatternRepository.getInstance(requireContext()), GameProgressRepository.getInstance(requireContext()))
         viewModel = ViewModelProvider(requireActivity(), factory).get(PatternViewModel::class.java)
