@@ -98,8 +98,42 @@ class CrossStitchView @JvmOverloads constructor(
         return gameProgress
     }
 
+    fun autoFill(){
+        this.myCrossStitchGrid = this.patternData.gridColor.map { it.clone() }.toTypedArray()
+        this.grid = this.myCrossStitchGrid.map { it.clone() }.toTypedArray()
+        cacheBitmap?.recycle()
+        cacheBitmap = null
+        cacheCanvas = null
+        this.completedCells = Constants.Cells
+        viewModel.setProgress(Constants.Cells)
+        invalidate()
+    }
+
+    fun reset(){
+        this.myCrossStitchGrid = Array(numRows) { IntArray(numCols) { Int.MIN_VALUE } }
+        this.grid = this.patternData.gridColor.map { it.clone() }.toTypedArray()
+        cacheBitmap?.recycle()
+        cacheBitmap = null
+        cacheCanvas = null
+        this.completedCells = 0
+        this.mistake = 0
+        viewModel.setProgress(0)
+        viewModel.setMistake(0)
+        invalidate()
+    }
+
+
+
     fun getBitMap(): Bitmap? {
         return cacheBitmap
+    }
+
+    fun getCurrentCross(): Array<IntArray> {
+        return this.myCrossStitchGrid
+    }
+
+    fun getCompletedCells(): Int? {
+        return this.completedCells
     }
 
     fun setSelectedColor(color: Int) {
@@ -413,7 +447,6 @@ class CrossStitchView @JvmOverloads constructor(
 
     fun drawCrossStitch(canvas: Canvas, row: Int, col: Int, drawCellSize: Float, paint: Paint) {
         // Tọa độ trung tâm của mũi thêu
-        Log.d("assa", "drawCrossStitch: ")
         val x = (col + 0.5f) * drawCellSize
         val y = (row + 0.5f) * drawCellSize
 

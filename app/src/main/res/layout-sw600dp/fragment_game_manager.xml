@@ -16,7 +16,7 @@
         >
         <FrameLayout
             android:id="@+id/MainBoardGame"
-            android:layout_width="500dp"
+            android:layout_width="50dp"
             android:layout_height="match_parent"></FrameLayout>
 
 
@@ -112,6 +112,7 @@
                         android:layout_height="wrap_content"
                         android:src="@drawable/save_24px">
                     </ImageButton>
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -134,6 +135,41 @@
                         android:src="@drawable/motion_sensor_active_24px">
                     </ImageButton>
 
+
+
+
+                </LinearLayout>
+
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/setting_top"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp">
+                    <ImageButton
+                        android:id="@+id/btn_reset"
+                        android:layout_width="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity = "left"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/reset">
+                    </ImageButton>
+                    <ImageButton
+                        android:id="@+id/btn_fill"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity= "right"
+                        android:src="@drawable/fill_svgrepo_com">
+                    </ImageButton>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="right"
+                    android:layout_weight="1"
+                    >
                     <ImageButton
                         android:id="@+id/btn_fullscreen"
                         android:layout_width="wrap_content"
@@ -141,7 +177,6 @@
                         android:layout_height="wrap_content"
                         android:src="@drawable/fullscreen_24px">
                     </ImageButton>
-
                     <ImageButton
                         android:id="@+id/btn_cache"
                         android:layout_width="wrap_content"
@@ -149,12 +184,9 @@
                         android:layout_height="wrap_content"
                         android:src="@drawable/dropdown_24px">
                     </ImageButton>
+
                 </LinearLayout>
-
-
-
             </LinearLayout>
-
             <GridLayout
                 android:id="@+id/gridlayout"
                 android:layout_width="match_parent"
@@ -162,6 +194,22 @@
                 android:numColumns="auto_fit"
                 android:layout_weight="1"
                 ></GridLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="end">
+
+                <ImageButton
+                    android:id="@+id/btn_verified"
+                    android:layout_width="32dp"
+                    android:layout_height="wrap_content"
+                    android:gravity= "right"
+                    android:layout_margin="32dp"
+                    android:scaleX="3"
+                    android:scaleY="3"
+                    android:src="@drawable/verified_24px">
+                </ImageButton>
+            </LinearLayout>
 
         </LinearLayout>
     </LinearLayout>

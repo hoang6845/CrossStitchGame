@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
 //        val converterP = ConverterPixel()
 //        val converter = Converter()
 //        val grid = converterP.generatePatternFromBitmap(bitmap, resources.getInteger(R.integer.max_rows), resources.getInteger(R.integer.max_columns))
-//        val palette = converterP.KMeansColor(grid, 24)
+//        val palette = converterP.KMeansColor(grid, )
 //        CoroutineScope (Dispatchers.IO).launch {
 //            var idCreated = patternViewModel.addPattern(PatternData(id = null, name = "Test", collorPalette = palette!!, gridColor = converterP.quantizeColors(grid, 24, palette), image = converter.bitmapToByteArray(converterP.colorMatrixToBitmap(grid)))).await()
 //            patternViewModel.addProgress(
@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
                 arguments: SavedState?
             ) {
                 when (destination.id) {
-                    R.id.homePage -> {
+                    R.id.homePage, R.id.verify -> {
                         mainBinding.toolbar.visibility = View.GONE
                     }
 
@@ -92,7 +92,7 @@ class MainActivity : AppCompatActivity() {
         })
 
         mainBinding.toolbar.setNavigationOnClickListener {
-            navController?.navigateUp()
+            navController?.navigate(R.id.homePage)
         }
 
         val displayMetrics = resources.displayMetrics

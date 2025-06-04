@@ -13,7 +13,6 @@ import com.example.crossstitch.repository.GameProgressRepository
 import com.example.crossstitch.repository.PatternRepository
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -25,12 +24,6 @@ class PatternViewModel(private val patternRepository: PatternRepository, private
     val listPattern = _listPattern.asStateFlow()
     val listPatternLiveData = listPattern.asLiveData()
 
-//    private val _listOwnPattern = MutableStateFlow<List<PatternData>>(emptyList())
-//    val listOwnPattern = _listOwnPattern.asStateFlow()
-//    val listOwnPatternLiveData = listOwnPattern.asLiveData()
-
-//    private val _categories = MutableStateFlow<List<String>>(emptyList())
-//    val cato
 
     private val _listProgress = MutableStateFlow<List<GameProgress>>(emptyList())
     val listGameProgress = _listProgress.asStateFlow()
