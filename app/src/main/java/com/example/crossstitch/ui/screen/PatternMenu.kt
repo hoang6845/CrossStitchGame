@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.crossstitch.R
 import com.example.crossstitch.databinding.FragmentPatternMenuBinding
+import com.example.crossstitch.di.Constants
 import com.example.crossstitch.model.entity.GameProgress
 import com.example.crossstitch.model.entity.PatternData
 import com.example.crossstitch.repository.GameProgressRepository
@@ -99,8 +100,8 @@ class PatternMenu : Fragment() {
 
     private fun getProgressByCollection(collectionType: String, listProgress: List<GameProgress>): List<GameProgress> {
         return when (collectionType){
-            "In progress" -> listProgress.filter {(it.completedCells in 0..18000-1 && it.mistake>0)|| it.completedCells in 1..18000-1}
-            "Completed" -> listProgress.filter {it.completedCells == 18000}
+            "In progress" -> listProgress.filter {(it.completedCells in 0..Constants.Cells-1 && it.mistake>0)|| it.completedCells in 1..Constants.Cells-1}
+            "Completed" -> listProgress.filter {it.completedCells == Constants.Cells}
             else -> emptyList()
         }
     }

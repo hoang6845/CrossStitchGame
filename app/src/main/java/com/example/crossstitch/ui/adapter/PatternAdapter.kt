@@ -1,15 +1,12 @@
 package com.example.crossstitch.ui.adapter
 
 import android.os.Build
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.example.crossstitch.base.FlipAnimation
 import com.example.crossstitch.converter.Converter
 import com.example.crossstitch.databinding.LineItemPatternBinding
 import com.example.crossstitch.model.entity.GameProgress

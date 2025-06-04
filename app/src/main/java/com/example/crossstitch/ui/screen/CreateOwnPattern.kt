@@ -97,10 +97,10 @@ class CreateOwnPattern : Fragment() {
             imageViewModel.setGrid(gridColorSelected!!)
 
             CoroutineScope(Dispatchers.IO).launch {
-                idCreated = viewModel.addPattern(PatternData(id = null, name = createOwnPatternBinding.nameImage.text.toString(), collorPalette = paletteSelected!!, gridColor = imageViewModel.grid.value, image = converter.bitmapToByteArray(converterP.colorMatrixToBitmap(imageViewModel.grid.value)), authorName = "Hoang")).await()
+                idCreated = viewModel.addPattern(PatternData(id = null, name = createOwnPatternBinding.nameImage.text.toString(), collorPalette = paletteSelected!!, gridColor = imageViewModel.grid.value, image = converter.bitmapToByteArray(converterP.colorMatrixToBitmap(imageViewModel.grid.value)), authorName = "Own")).await()
                 viewModel.addProgress(GameProgress(
                     id = 0, patternId = idCreated!!.toInt(),
-                    myCrossStitchGrid =  Array(resources.getInteger(R.integer.max_rows)) { IntArray(resources.getInteger(R.integer.max_columns)) { Int.MIN_VALUE } },
+                    myCrossStitchGrid =  Array(Constants.NUMROWS) { IntArray(Constants.NUMCOLS) { Int.MIN_VALUE } },
                     completedCells = 0,
                     mistake = 0
                 ))

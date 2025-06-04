@@ -15,8 +15,6 @@ import androidx.room.PrimaryKey
         )
     ],
     indices = [Index(value = ["patternId"], unique = true)]
-
-
 )
 data class GameProgress(
     @PrimaryKey(autoGenerate = true)

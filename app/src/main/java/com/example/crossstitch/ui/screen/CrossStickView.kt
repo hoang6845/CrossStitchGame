@@ -93,11 +93,9 @@ class CrossStitchView @JvmOverloads constructor(
                 numCompletedPallet?.set(index!!, numCompletedPallet!![index!!]-1)
 
             }
-            Log.d("check count num color", "updateNumCompletedPallet: ${selectedColor}")
             setSelectedColor(selectedColor!!)
         }else {
             var index = colorIndexMap?.get(patternData.gridColor[row][col])
-            Log.d("check count num color", "updateNumCompletedPallet: ${selectedColor}")
             if (patternData.gridColor[row][col] == myCrossStitchGrid[row][col] && patternData.gridColor[row][col] != newColor) {
                 if (index != null) {
                     numCompletedPallet?.set(index, numCompletedPallet!![index]-1)
@@ -143,15 +141,12 @@ class CrossStitchView @JvmOverloads constructor(
         viewModel.setMistake(this.mistake!!)
 
         cellSize = (ScreenSize.getGameBoardWidthDp() / numCols).dp
-//        Log.d("Check layout", "cellsize: ${cellSize}")
         drawCellSize = ((cellSize * numRows) / numDrawRows)
         numDrawCols = (ScreenSize.widthDp / drawCellSize!!).dp.toInt()
 
-//
             gameBinding.MainBoardGame.layoutParams.height = (cellSize * numRows).toInt()
             gameBinding.MainBoardGame.layoutParams.width = (cellSize*numCols).toInt()
             gameBinding.MainBoardGame.requestLayout()
-//        }
         colorIndexMap = this.patternData.collorPalette.withIndex().associate { it.value to it.index }
 
         this.numCompletedPallet = MutableList(this.patternData.collorPalette.size) { 0 }

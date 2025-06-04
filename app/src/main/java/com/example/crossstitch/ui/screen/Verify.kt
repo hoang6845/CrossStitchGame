@@ -6,7 +6,6 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,14 +13,13 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.example.crossstitch.R
-import com.example.crossstitch.converter.Converter
-import com.example.crossstitch.converter.ConverterPixel
 import com.example.crossstitch.databinding.FragmentVerifyBinding
 import com.example.crossstitch.di.Constants
 import com.example.crossstitch.model.entity.GameProgress

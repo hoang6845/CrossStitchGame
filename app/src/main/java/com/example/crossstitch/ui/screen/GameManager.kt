@@ -63,17 +63,6 @@ class GameManager : Fragment() {
         viewModel = ViewModelProvider(requireActivity(), factory).get(PatternViewModel::class.java)
         verifyViewModel = ViewModelProvider(requireActivity()).get(VerifyViewModel::class.java)
 
-//        if (arguments?.getString("type").equals("App")){
-//            currentPattern = arguments?.getInt("position")
-//                ?.let { viewModel.listPatternLiveData.value?.get(it) }
-//            currentProgress = arguments?.getInt("position")
-//                ?.let { viewModel.listGameProgressLiveData.value?.get(it) }
-//        }else if(arguments?.getString("type").equals("Own")){
-//            currentPattern = arguments?.getInt("position")
-//                ?.let { viewModel.listOwnPatternLiveData.value?.get(it) }
-//            currentProgress = arguments?.getInt("position")
-//                ?.let { viewModel.listGameProgressLiveData.value?.get(it+viewModel.listPatternLiveData.value.size) }
-//        }
         var patternId = arguments?.getInt("patternId")
         currentPattern =  viewModel.listPatternLiveData.value.find { patternData: PatternData -> patternData.id == patternId }
         currentProgress = viewModel.listGameProgressLiveData.value.find { gameProgress: GameProgress -> gameProgress.patternId == patternId }
