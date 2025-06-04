@@ -3,8 +3,6 @@ package com.example.crossstitch.utils
 import android.content.Context
 import android.content.res.AssetManager
 import android.util.Log
-import androidx.room.Room
-import com.example.crossstitch.model.dao.AppDatabase
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
@@ -21,9 +19,7 @@ class DBHelper(private val context: Context) {
         }
     }
 
-    // Sao chép cơ sở dữ liệu mới từ assets vào thư mục cơ sở dữ liệu của ứng dụng
     fun copyDatabaseFromAssets() {
-        // Kiểm tra nếu cơ sở dữ liệu đã tồn tại
         if (!dbPath.exists()) {
             try {
                 val assetManager: AssetManager = context.assets
@@ -38,7 +34,6 @@ class DBHelper(private val context: Context) {
                     Log.d("check assets", "CrossStitchDB not found in assets")
                 }
 
-                // Sao chép tệp từ assets vào thư mục cơ sở dữ liệu
                 val inputStream: InputStream = assetManager.open("CrossStitchDB")
                 val outputStream: OutputStream = FileOutputStream(dbPath)
 
@@ -66,15 +61,5 @@ class DBHelper(private val context: Context) {
         } else {
             Log.d("DBHelper", "Database is existed.")
         }
-    }
-
-
-    // Hàm khởi tạo lại cơ sở dữ liệu với Room
-    fun initializeRoomDatabase(): AppDatabase {
-        return Room.databaseBuilder(
-            context.applicationContext,
-            AppDatabase::class.java, databaseName
-        ).fallbackToDestructiveMigration()
-            .build()
     }
 }

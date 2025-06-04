@@ -17,6 +17,7 @@ import com.example.crossstitch.R
 import com.example.crossstitch.converter.Converter
 import com.example.crossstitch.converter.ConverterPixel
 import com.example.crossstitch.databinding.FragmentCreateOwnPatternBinding
+import com.example.crossstitch.di.Constants
 import com.example.crossstitch.model.entity.GameProgress
 import com.example.crossstitch.model.entity.PatternData
 import com.example.crossstitch.repository.GameProgressRepository
@@ -33,7 +34,7 @@ class CreateOwnPattern : Fragment() {
     private lateinit var imageViewModel: ImageViewModel
     private lateinit var viewModel: PatternViewModel
     private var handleSave:View.OnClickListener? = null
-    private var currentSeekBarValue:Int?=24
+    private var currentSeekBarValue:Int?=Constants.MAX_COLORS
     private var paletteSelected: List<Int>? = null
     private var gridColorSelected: Array<IntArray>? = null
     private var navController:NavController?=null
@@ -51,6 +52,9 @@ class CreateOwnPattern : Fragment() {
         createOwnPatternBinding.img.setImageBitmap(converter.colorMatrixToBitmap(imageViewModel.grid.value))
         paletteSelected = imageViewModel.palette.value
         gridColorSelected = imageViewModel.grid.value
+        createOwnPatternBinding.seekBar.max = Constants.MAX_COLORS
+        createOwnPatternBinding.seekBar.progress = Constants.MAX_COLORS
+        createOwnPatternBinding.numcolors.setText(""+Constants.MAX_COLORS)
         createOwnPatternBinding.seekBar.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(p0: SeekBar?, p1: Int, p2: Boolean) {
                 currentSeekBarValue = p1
@@ -71,7 +75,7 @@ class CreateOwnPattern : Fragment() {
                     }
                 gridColorSelected = converter.quantizeColors(imageViewModel.grid.value, currentSeekBarValue!!, paletteSelected!!)
                 createOwnPatternBinding.img.setImageBitmap(converter.colorMatrixToBitmap(gridColorSelected!!))
-//                Log.d("demmau", "onStopTrackingTouch: "+countUniqueColors(imageViewModel.grid.value))
+                Log.d("demmau", "onStopTrackingTouch: "+countUniqueColors(gridColorSelected!!))
             }
         })
         preapareHandle()

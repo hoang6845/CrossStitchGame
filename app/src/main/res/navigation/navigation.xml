@@ -35,6 +35,9 @@
         <argument
             android:name="type"
             app:argType="string" />
+        <action
+            android:id="@+id/action_gameManager_to_verify"
+            app:destination="@id/verify" />
     </fragment>
 
     <fragment
@@ -85,5 +88,17 @@
         <action
             android:id="@+id/action_menuPatternCollectionContainer_to_ownPatternMenu"
             app:destination="@id/ownPatternMenu" />
+    </fragment>
+    <fragment
+        android:id="@+id/verify"
+        android:name="com.example.crossstitch.ui.screen.Verify"
+        android:label="fragment_verify"
+        tools:layout="@layout/fragment_verify" >
+        <action
+            android:id="@+id/action_verify_to_menuPatternContainer"
+            app:destination="@id/menuPatternContainer" />
+        <action
+            android:id="@+id/action_verify_to_gameManager"
+            app:destination="@id/gameManager" />
     </fragment>
 </navigation>

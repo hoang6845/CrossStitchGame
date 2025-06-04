@@ -56,7 +56,6 @@ fun saveBitmapToGallery(context: Context, bitmap: Bitmap, filename: String = "my
         fos.flush()
         fos.close()
 
-        // Thông báo hệ thống cập nhật ảnh
         MediaScannerConnection.scanFile(context, arrayOf(image.toString()), arrayOf(mimeType), null)
 
         Toast.makeText(context, "Saved to Gallery", Toast.LENGTH_SHORT).show()
