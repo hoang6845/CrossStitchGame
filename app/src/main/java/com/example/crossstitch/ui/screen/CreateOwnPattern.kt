@@ -43,7 +43,6 @@ class CreateOwnPattern : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         navController = findNavController()
-        mainBinding.toolbar.visibility = View.GONE
         createOwnPatternBinding = FragmentCreateOwnPatternBinding.inflate(inflater, container, false)
         imageViewModel = ViewModelProvider(requireActivity()).get(ImageViewModel::class.java)
         val factory = PatternViewModel.providerFactory(PatternRepository.getInstance(requireContext()), GameProgressRepository.getInstance(requireContext()))
@@ -97,7 +96,7 @@ class CreateOwnPattern : Fragment() {
             imageViewModel.setGrid(gridColorSelected!!)
 
             CoroutineScope(Dispatchers.IO).launch {
-                idCreated = viewModel.addPattern(PatternData(id = null, name = createOwnPatternBinding.nameImage.text.toString(), collorPalette = paletteSelected!!, gridColor = imageViewModel.grid.value, image = converter.bitmapToByteArray(converterP.colorMatrixToBitmap(imageViewModel.grid.value)), authorName = "Own")).await()
+                idCreated = viewModel.addPattern(PatternData(id = null, name = createOwnPatternBinding.nameImage.text.toString(), collorPalette = paletteSelected!!, gridColor = imageViewModel.grid.value, image = converter.bitmapToByteArray(converterP.colorMatrixToBitmap(imageViewModel.grid.value)), Category = "My Image")).await()
                 viewModel.addProgress(GameProgress(
                     id = 0, patternId = idCreated!!.toInt(),
                     myCrossStitchGrid =  Array(Constants.NUMROWS) { IntArray(Constants.NUMCOLS) { Int.MIN_VALUE } },

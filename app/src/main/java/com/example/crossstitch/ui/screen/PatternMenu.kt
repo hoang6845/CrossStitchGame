@@ -18,7 +18,7 @@ import com.example.crossstitch.model.entity.PatternData
 import com.example.crossstitch.repository.GameProgressRepository
 import com.example.crossstitch.repository.PatternRepository
 import com.example.crossstitch.ui.adapter.PatternAdapter
-import com.example.crossstitch.ui.adapter.irv.IPatternRv
+import com.example.crossstitch.ui.adapter.irv.IRv
 import com.example.crossstitch.viewmodel.PatternViewModel
 
 lateinit var patternViewBinding: FragmentPatternMenuBinding
@@ -38,14 +38,13 @@ class PatternMenu : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        mainBinding.toolbar.visibility = View.VISIBLE
         navController = findNavController()
         patternViewBinding = FragmentPatternMenuBinding.inflate(inflater, container, false)
 
         val factory = PatternViewModel.providerFactory(PatternRepository.getInstance(requireContext()), GameProgressRepository.getInstance(requireContext()))
         viewModel = ViewModelProvider(requireActivity(), factory).get(PatternViewModel::class.java)
 
-        adapter = PatternAdapter(object : IPatternRv{
+        adapter = PatternAdapter(object : IRv{
             override fun onClickItem(position: Int) {
                 val bundle= Bundle()
                 bundle.putInt("patternId", this@PatternMenu.adapter?.listPattern?.get(position)?.id!!)

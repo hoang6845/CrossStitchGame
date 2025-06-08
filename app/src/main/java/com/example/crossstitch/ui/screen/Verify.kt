@@ -1,11 +1,15 @@
 package com.example.crossstitch.ui.screen
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +17,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -27,7 +32,7 @@ import com.example.crossstitch.model.entity.PatternData
 import com.example.crossstitch.repository.GameProgressRepository
 import com.example.crossstitch.repository.PatternRepository
 import com.example.crossstitch.ui.adapter.PatternAdapter
-import com.example.crossstitch.ui.adapter.irv.IPatternRv
+import com.example.crossstitch.ui.adapter.irv.IRv
 import com.example.crossstitch.utils.saveBitmapToGallery
 import com.example.crossstitch.viewmodel.PatternViewModel
 import com.example.crossstitch.viewmodel.VerifyViewModel
@@ -39,9 +44,11 @@ class Verify : Fragment() {
     private lateinit var verifyMainBinding: FragmentVerifyBinding
     private lateinit var verifyViewModel: VerifyViewModel
     private var handleSaveImage:View.OnClickListener? = null
-    private var handleGoBack:View.OnClickListener? = null
     private var handleShare: View.OnClickListener? = null
     private var navController: NavController? = null
+    private var handlePlayAgain:View.OnClickListener? = null
+    private var handleContinue:View.OnClickListener? = null
+    private var handleDeleteArtWork: View.OnClickListener? = null
     var bitmap: Bitmap? = null
 
     private var adapter:PatternAdapter? = null
@@ -64,14 +71,16 @@ class Verify : Fragment() {
         bitmap =  verifyViewModel.bitmap.value
         verifyMainBinding.img.setImageBitmap(bitmap)
         prepareHandle()
-        verifyMainBinding.btnDownload.background = null
         verifyMainBinding.btnDownload.setOnClickListener(handleSaveImage)
-//        verifyMainBinding.btnHome.background = null
-//        verifyMainBinding.btnHome.setOnClickListener(handleGoBack)
+        verifyMainBinding.btnPlayAgain.setOnClickListener(handlePlayAgain)
+        verifyMainBinding.btnContinue.setOnClickListener(handleContinue)
+
         verifyMainBinding.btnShare.background = null
         verifyMainBinding.btnShare.setOnClickListener(handleShare)
 
-        adapter = PatternAdapter(object : IPatternRv {
+        verifyMainBinding.btnContinue.isVisible = arguments?.getBoolean("isCompleted") != true
+
+        adapter = PatternAdapter(object : IRv {
             override fun onClickItem(position: Int) {
                 val bundle= Bundle()
                 bundle.putInt("patternId", this@Verify.adapter?.listPattern?.get(position)?.id!!)
@@ -99,6 +108,8 @@ class Verify : Fragment() {
         patternViewModel?.listGameProgressLiveData?.observe(viewLifecycleOwner, {list ->
             updateAdapter(patternViewModel?.listPatternLiveData?.value?: emptyList(), list)
         })
+
+        binding.btnDelete.setOnClickListener(handleDeleteArtWork)
 
         return verifyMainBinding.root
     }
@@ -129,13 +140,49 @@ class Verify : Fragment() {
         handleSaveImage = View.OnClickListener {
             checkStoragePermissionAndSave()
         }
-//        handleGoBack = View.OnClickListener {
-//            verifyViewModel.clearBitMap()
-//            navController?.navigate(R.id.menuPatternContainer)
-//        }
         handleShare = View.OnClickListener {
             bitmap?.let { it1 -> shareImageBitmap(it1) }
         }
+
+        handlePlayAgain = View.OnClickListener {
+            var patternId = arguments?.getInt("patternId")
+            Log.d("TAG", "prepareHandle: ${patternId}")
+            patternViewModel?.listGameProgressLiveData?.value?.find { gameProgress: GameProgress -> gameProgress.patternId == patternId }
+                ?.let { it1 -> patternViewModel?.updateProgress(it1.copy(completedCells = 0, mistake = 0, myCrossStitchGrid = Array(Constants.NUMROWS) { IntArray(Constants.NUMCOLS) { Int.MIN_VALUE }})) }
+            navController?.popBackStack(R.id.gameManager, true)
+            Handler(Looper.getMainLooper()).postDelayed({
+                val bundle = Bundle().apply {
+                    if (patternId != null) {
+                        putInt("patternId", patternId)
+                    }
+                }
+                navController?.navigate(R.id.gameManager, bundle)
+            }, 500)
+        }
+
+        handleDeleteArtWork = View.OnClickListener {
+            val dialogView = layoutInflater.inflate(R.layout.dialog_delete_artwork, null)
+            val dialog = AlertDialog.Builder(requireContext())
+                .setView(dialogView)
+                .create()
+            dialogView.findViewById<View>(R.id.btn_delete).setOnClickListener {
+                var patternId = arguments?.getInt("patternId")
+                patternViewModel?.listGameProgressLiveData?.value?.find { gameProgress: GameProgress -> gameProgress.patternId == patternId }
+                    ?.let { it1 -> patternViewModel?.updateProgress(it1.copy(completedCells = 0, mistake = 0, myCrossStitchGrid = Array(Constants.NUMROWS) { IntArray(Constants.NUMCOLS) { Int.MIN_VALUE }})) }
+                navController?.popBackStack(R.id.gameManager, true)
+                dialog.dismiss()
+            }
+            dialogView.findViewById<View>(R.id.btn_cancel).setOnClickListener {
+                dialog.dismiss()
+            }
+            dialog.show()
+        }
+
+        handleContinue = View.OnClickListener {
+            navController!!.popBackStack()
+        }
+
+
     }
 
 

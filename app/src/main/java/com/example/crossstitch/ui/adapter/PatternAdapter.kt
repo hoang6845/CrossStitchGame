@@ -11,9 +11,9 @@ import com.example.crossstitch.converter.Converter
 import com.example.crossstitch.databinding.LineItemPatternBinding
 import com.example.crossstitch.model.entity.GameProgress
 import com.example.crossstitch.model.entity.PatternData
-import com.example.crossstitch.ui.adapter.irv.IPatternRv
+import com.example.crossstitch.ui.adapter.irv.IRv
 
-class PatternAdapter(var Irv:IPatternRv, var listPattern: List<PatternData>,var listProgress: List<GameProgress>, var listState: MutableList<Boolean>) :RecyclerView.Adapter<ViewHolder>() {
+class PatternAdapter(var Irv:IRv, var listPattern: List<PatternData>, var listProgress: List<GameProgress>, var listState: MutableList<Boolean>) :RecyclerView.Adapter<ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = LineItemPatternBinding.inflate(LayoutInflater.from(parent.context), parent, false)

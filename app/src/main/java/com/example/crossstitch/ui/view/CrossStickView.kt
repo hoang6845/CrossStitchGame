@@ -1,4 +1,4 @@
-package com.example.crossstitch.ui.screen
+package com.example.crossstitch.ui.view
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -17,6 +17,7 @@ import com.example.crossstitch.di.Constants
 import com.example.crossstitch.di.ScreenSize
 import com.example.crossstitch.model.entity.GameProgress
 import com.example.crossstitch.model.entity.PatternData
+import com.example.crossstitch.ui.screen.gameBinding
 import com.example.crossstitch.viewmodel.PatternViewModel
 
 class CrossStitchView @JvmOverloads constructor(
@@ -57,6 +58,10 @@ class CrossStitchView @JvmOverloads constructor(
     private var numColorNeedCompleted: MutableList<Int>? = null
     private var colorIndexMap: Map<Int, Int>? = null
 
+
+    fun getMistake(): Int {
+        return mistake!!
+    }
 
     private fun calNumCompletedPallet(){
 
@@ -169,6 +174,7 @@ class CrossStitchView @JvmOverloads constructor(
         cacheBitmap = null
         cacheCanvas = null
         this.completedCells = Constants.Cells
+        this.mistake = 0
         viewModel.setProgress(Constants.Cells)
         numCompletedPallet = numColorNeedCompleted?.toMutableList()
         setSelectedColor(selectedColor!!)
@@ -221,6 +227,8 @@ class CrossStitchView @JvmOverloads constructor(
         cacheCanvas = null
         invalidate()
     }
+
+
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
@@ -368,6 +376,8 @@ class CrossStitchView @JvmOverloads constructor(
         if (isEraserMode) {
             if (patternData.gridColor[row][col] == myCrossStitchGrid[row][col]){
                 this.completedCells = this.completedCells!! - 1
+            }else if (myCrossStitchGrid[row][col] != Int.MIN_VALUE && patternData.gridColor[row][col] != myCrossStitchGrid[row][col]){
+                this.mistake = this.mistake!! -1
             }
         }else{
             if (patternData.gridColor[row][col] == myCrossStitchGrid[row][col] && patternData.gridColor[row][col] != newColor) {
@@ -382,6 +392,7 @@ class CrossStitchView @JvmOverloads constructor(
             } else if (patternData.gridColor[row][col] != myCrossStitchGrid[row][col]) {
                 if (patternData.gridColor[row][col] == newColor) {
                     this.completedCells = this.completedCells!! + 1
+                    this.mistake = this.mistake!! -1
                 }
             }
         }

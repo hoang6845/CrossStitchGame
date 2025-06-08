@@ -7,12 +7,16 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Environment
+import android.view.LayoutInflater
+import android.widget.LinearLayout
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.widget.AppCompatButton
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import com.example.crossstitch.R
 import com.example.crossstitch.di.Constants
 import java.io.File
 import java.text.SimpleDateFormat
@@ -62,18 +66,24 @@ class TakePhotoUtils(
     }
 
     fun showImagePickerDialog() {
-        AlertDialog.Builder(fragment.requireContext())
-            .setTitle("Pick image from")
-            .setItems(arrayOf("Gallery", "Take a picture")) { dialog, which ->
-                when (which) {
-                    0 -> pickFromGallery()
-                    1 -> captureFromCamera()
-                }
-            }
-            .setNegativeButton("Cancel") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .show()
+        val dialogView = LayoutInflater.from(fragment.requireContext()).inflate(R.layout.dialog_image_picker, null)
+        val dialog = AlertDialog.Builder(fragment.requireContext())
+            .setView(dialogView)
+            .create()
+        dialogView.findViewById<LinearLayout>(R.id.btn_capture_camera).setOnClickListener{
+            captureFromCamera()
+            dialog.dismiss()
+        }
+        dialogView.findViewById<LinearLayout>(R.id.btn_pick_gallery).setOnClickListener{
+            pickFromGallery()
+            dialog.dismiss()
+        }
+        dialogView.findViewById<AppCompatButton>(R.id.btn_cancel_dialog).setOnClickListener{
+            dialog.dismiss()
+        }
+        dialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialog.show()
     }
 
     private fun pickFromGallery() {

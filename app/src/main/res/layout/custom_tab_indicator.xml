@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/shape_tab_bg">
+    <androidx.cardview.widget.CardView
+        android:layout_margin="3dp"
+        app:cardCornerRadius="12dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:layout_width="wrap_content"
+            android:minWidth="80dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:gravity="center"
+            android:textSize="28sp"
+            android:fontFamily="@font/lilita_one_font"
+            android:textColor="#7AC20094"
+            android:layout_height="wrap_content"
+            android:text="All"
+            ></TextView>
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

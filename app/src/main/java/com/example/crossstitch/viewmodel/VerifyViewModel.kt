@@ -31,10 +31,5 @@ class VerifyViewModel: ViewModel() {
 
     }
 
-//    private var _grid = MutableLiveData<Array<IntArray>>()
-//    val grid: LiveData<Array<IntArray>> get() = _grid
-//    fun setGrid(grid: Array<IntArray>) {
-//        _grid.value = grid.map { it.clone() }.toTypedArray()
-//    }
 
 }

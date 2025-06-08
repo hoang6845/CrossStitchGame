@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="12dp"
+    android:orientation="vertical"
+    android:background="@android:color/transparent">
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="380dp"
+            android:src="@drawable/vector"
+            android:layout_gravity="center" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="340dp"
+            android:layout_marginTop="24dp"
+            android:src="@drawable/icon_congratulation" />
+    </FrameLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btn_show_result"
+            android:layout_marginTop="12dp"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="90dp"
+            android:background="@drawable/shape_btn_ok"
+            android:text="show result"
+            android:fontFamily="@font/lilita_one_font"
+            android:textSize="32sp"
+            android:textColor="@color/white"
+            android:layout_margin="12dp"
+            >
+        </androidx.appcompat.widget.AppCompatButton>
+    </LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
+</LinearLayout>

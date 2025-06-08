@@ -10,21 +10,132 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
-        app:title="Cross Stich"
-        app:menu="@menu/menu"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFF7AD"
-        app:navigationIcon="@drawable/house_24px"
-        >
+        app:navigationIcon="@drawable/btn_back_home">
+        <ImageView
+            android:id="@+id/title_toolbar"
+            android:visibility="visible"
+            android:layout_width="240dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/title_cross"></ImageView>
+
+        <FrameLayout
+            android:id="@+id/title_setting"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SETTING"
+                android:textColor="#DA62B5"
+                android:textSize="36sp"
+                android:shadowColor="#DA62B5"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="18"
+                android:textStyle="bold"
+                android:fontFamily="@font/lilita_one_font"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SETTING"
+                android:textColor="@color/white"
+                android:textSize="34sp"
+                android:textStyle="bold"
+                android:layout_marginStart="3dp"
+                android:fontFamily="@font/lilita_one_font"
+                />
+        </FrameLayout>
+        <FrameLayout
+            android:id="@+id/title_collection"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="COLLECTION"
+                android:textColor="#DA62B5"
+                android:textSize="36sp"
+                android:shadowColor="#DA62B5"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="18"
+                android:textStyle="bold"
+                android:fontFamily="@font/lilita_one_font"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="COLLECTION"
+                android:textColor="@color/white"
+                android:textSize="34sp"
+                android:textStyle="bold"
+                android:layout_marginStart="3dp"
+                android:fontFamily="@font/lilita_one_font"
+                />
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/title_upload_image"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="UPLOAD IMAGE"
+                android:textColor="#DA62B5"
+                android:textSize="36sp"
+                android:shadowColor="#DA62B5"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="18"
+                android:textStyle="bold"
+                android:fontFamily="@font/lilita_one_font"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="UPLOAD IMAGE"
+                android:textColor="@color/white"
+                android:textSize="34sp"
+                android:textStyle="bold"
+                android:layout_marginStart="3dp"
+                android:fontFamily="@font/lilita_one_font"
+                />
+        </FrameLayout>
+        <ImageView
+            android:id="@+id/btn_delete"
+            android:visibility="gone"
+            android:layout_marginLeft="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginEnd="4dp"
+            android:layout_marginBottom="2dp"
+            android:src="@drawable/btn_delete"></ImageView>
 
     </androidx.appcompat.widget.Toolbar>
-<!--    <FrameLayout-->
-<!--        android:id="@+id/fragment"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent">-->
 
-<!--    </FrameLayout>-->
     <androidx.fragment.app.FragmentContainerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

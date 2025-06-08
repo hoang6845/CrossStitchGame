@@ -2,17 +2,16 @@ package com.example.crossstitch.ui.screen
 
 import android.os.Bundle
 import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.onNavDestinationSelected
 import com.example.crossstitch.R
 import com.example.crossstitch.databinding.ActivityMainBinding
 import com.example.crossstitch.di.Constants
@@ -21,10 +20,8 @@ import com.example.crossstitch.repository.GameProgressRepository
 import com.example.crossstitch.repository.PatternRepository
 import com.example.crossstitch.viewmodel.ImageViewModel
 import com.example.crossstitch.viewmodel.PatternViewModel
-import androidx.core.view.isEmpty
 
-lateinit var mainBinding: ActivityMainBinding
-
+lateinit var binding: ActivityMainBinding
 class MainActivity : AppCompatActivity() {
     lateinit var patternViewModel: PatternViewModel
     lateinit var imageViewModel: ImageViewModel
@@ -33,8 +30,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        mainBinding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(mainBinding.root)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
@@ -69,22 +66,22 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager
             .findFragmentById(R.id.fragmentContainer) as NavHostFragment
         navController = navHostFragment.navController
-        setSupportActionBar(mainBinding.toolbar)
+
         navController!!.addOnDestinationChangedListener { _, destination, arguments ->
             when (destination.id) {
-                R.id.homePage -> {
-                    mainBinding.toolbar.visibility = View.GONE
+                R.id.homePage, R.id.gameManager -> {
+                    binding.toolbar.visibility = View.GONE
                 }
 
                 else -> {
-                    mainBinding.toolbar.visibility = View.VISIBLE
-                    updateOnMenu(destination)
+                    binding.toolbar.visibility = View.VISIBLE
+                    updateToolBar(destination)
                 }
             }
-            updateOnMenu(destination)
+
         }
 
-        mainBinding.toolbar.setNavigationOnClickListener {
+        binding.toolbar.setNavigationOnClickListener {
             navController?.navigate(R.id.homePage)
         }
 
@@ -105,43 +102,37 @@ class MainActivity : AppCompatActivity() {
         return super.onCreateOptionsMenu(menu)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return super.onOptionsItemSelected(item) || navController?.let {
-            item.onNavDestinationSelected(
-                it
-            )
-        } == true
-    }
-
-    fun updateOnMenu(destination: NavDestination) {
-        when (destination.id) {
+    private fun updateToolBar(destination: NavDestination){
+        when (destination.id){
             R.id.menuPatternContainer -> {
-                if (mainBinding.toolbar.menu.isEmpty()) {
-//                    mainBinding.toolbar.menu.clear()
-                    mainBinding.toolbar.inflateMenu(R.menu.menu)
-                }
-                mainBinding.toolbar.menu.findItem(R.id.menuPatternContainer)
-                    .setIcon(R.drawable.interests_24px)
-                mainBinding.toolbar.menu.findItem(R.id.ownPatternMenu)
-                    .setIcon(R.drawable.photo_library_24px_default)
+                binding.titleToolbar.visibility = View.VISIBLE
+                binding.titleSetting.visibility = View.GONE
+                binding.titleCollection.visibility = View.GONE
+                binding.titleUploadImage.visibility = View.GONE
+                binding.btnDelete.visibility = View.GONE
             }
-
-            R.id.ownPatternMenu -> {
-                if (mainBinding.toolbar.menu.isEmpty()) {
-                    mainBinding.toolbar.menu.clear()
-                    mainBinding.toolbar.inflateMenu(R.menu.menu)
-                }
-                mainBinding.toolbar.menu.findItem(R.id.menuPatternContainer)
-                    .setIcon(R.drawable.interests_24px_default)
-                mainBinding.toolbar.menu.findItem(R.id.ownPatternMenu)
-                    .setIcon(R.drawable.photo_library_24px)
+            R.id.menuPatternCollectionContainer -> {
+                binding.titleToolbar.visibility = View.GONE
+                binding.titleSetting.visibility = View.GONE
+                binding.titleCollection.visibility = View.VISIBLE
+                binding.titleUploadImage.visibility = View.GONE
+                binding.btnDelete.visibility = View.GONE
             }
-
-            else -> {
-                mainBinding.toolbar.menu.clear()
-//                mainBinding.toolbar.menu.findItem(R.id.menuPatternContainer).setIcon(R.drawable.interests_24px_default)
-//                mainBinding.toolbar.menu.findItem(R.id.ownPatternMenu).setIcon(R.drawable.photo_library_24px_default)
+            R.id.createOwnPattern -> {
+                binding.titleToolbar.visibility = View.GONE
+                binding.titleSetting.visibility = View.GONE
+                binding.titleCollection.visibility = View.GONE
+                binding.titleUploadImage.visibility = View.VISIBLE
+                binding.btnDelete.visibility = View.GONE
+            }
+            R.id.verify -> {
+                binding.titleToolbar.visibility = View.VISIBLE
+                binding.titleSetting.visibility = View.GONE
+                binding.titleCollection.visibility = View.GONE
+                binding.titleUploadImage.visibility = View.GONE
+                binding.btnDelete.visibility = View.VISIBLE
             }
         }
     }
+
 }
